@@ -1,74 +1,75 @@
 package main
 
 import (
-	"crypto/tls"
-	"crypto/x509"
 	"encoding/json"
 	"fmt"
 	"github.com/pborman/getopt/v2"
 	"io/ioutil"
 	"log"
-	"net/http"
-	"os"
 	"time"
 )
 
-// Create an http.Client that recognizes the Puppet CA.
-func httpClient() *http.Client {
-	caCertPath := "/Users/daniel/work/puppetca.ops.puppetlabs.net.pem"
+const RFC3339Micro = "2006-01-02T15:04:05.999Z07:00"
 
-	caCert, err := ioutil.ReadFile(caCertPath)
-	if err != nil {
-		log.Fatal(err)
+type DeployStatus int
+
+const (
+	New       DeployStatus = iota
+	Queued    DeployStatus = iota
+	Deploying DeployStatus = iota
+	Deployed  DeployStatus = iota
+	Failed    DeployStatus = iota
+)
+
+func (status DeployStatus) String() string {
+	names := [...]string{
+		"new",
+		"queued",
+		"deploying",
+		"deployed",
+		"failed",
 	}
-
-	caCertPool := x509.NewCertPool()
-	caCertPool.AppendCertsFromPEM(caCert)
-
-	tlsConfig := &tls.Config{
-		RootCAs: caCertPool,
-	}
-	transport := &http.Transport{TLSClientConfig: tlsConfig}
-
-	return &http.Client{
-		Transport: transport,
-		Timeout:   60 * time.Second,
-	}
+	return names[status]
 }
 
-func getDeployStatus() []byte {
-	server := "pe-mom1-prod.ops.puppetlabs.net"
-	port := "8170"
+type Deploy struct {
+	name   string
+	status DeployStatus
+	sha    string
+	date   time.Time
+	error  map[string]interface{}
+}
 
-	url := fmt.Sprintf("https://%s:%s/code-manager/v1/deploys/status", server, port)
-	request, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		log.Panic(err)
+func convertRawDeploy(rawDeploy map[string]interface{}, status DeployStatus, dateKey string) Deploy {
+	var sha string
+	var date time.Time
+	var err error
+
+	name := rawDeploy["environment"].(string)
+	if rawDeploy["deploy-signature"] != nil {
+		sha = rawDeploy["deploy-signature"].(string)
 	}
 
-	pe_token := os.Getenv("pe_token")
-	request.Header.Set("Accept", "application/json")
-	request.Header.Set("X-Authentication", pe_token)
-
-	response, err := httpClient().Do(request)
-	if err != nil {
-		log.Fatal(err)
+	if rawDeploy[dateKey] != nil {
+		date, err = time.Parse(RFC3339Micro, rawDeploy[dateKey].(string))
+		date = date.Truncate(time.Second)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
-	if response.StatusCode < 200 || response.StatusCode >= 300 {
-		log.Fatalf("Unexpected status %q checking deployment status.", response.Status)
-	}
+	return Deploy{name, status, sha, date, nil}
+}
 
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+func jsonGetArray(parent map[string]interface{}, key string) []interface{} {
+	return parent[key].([]interface{})
+}
 
-	return body
+func jsonGetObject(parent map[string]interface{}, key string) map[string]interface{} {
+	return parent[key].(map[string]interface{})
 }
 
 func main() {
-	const RFC3339Micro = "2006-01-02T15:04:05.999Z07:00"
 	var deployStatusResponse []byte
 	var err error
 
@@ -77,7 +78,7 @@ func main() {
 	getopt.Parse()
 
 	if *deployStatusSource == "" {
-		deployStatusResponse = getDeployStatus()
+		deployStatusResponse = GetDeployStatus()
 	} else {
 		deployStatusResponse, err = ioutil.ReadFile(*deployStatusSource)
 		if err != nil {
@@ -85,27 +86,43 @@ func main() {
 		}
 	}
 
+	environments := map[string][]Deploy{}
+
 	object := map[string]interface{}{}
 	json.Unmarshal(deployStatusResponse, &object)
 
-	fileSyncStatus := object["file-sync-storage-status"].(map[string]interface{})
-	deployedEnvironments := fileSyncStatus["deployed"].([]interface{})
+	fileSyncStatus := jsonGetObject(object, "file-sync-storage-status")
+	deployedEnvironments := jsonGetArray(fileSyncStatus, "deployed")
+	for _, _rawDeploy := range deployedEnvironments {
+		rawDeploy := _rawDeploy.(map[string]interface{})
+		deploy := convertRawDeploy(rawDeploy, Deployed, "date")
+		environments[deploy.name] = append(environments[deploy.name], deploy)
+	}
 
-	now := time.Now()
+	deploysStatus := jsonGetObject(object, "deploys-status")
+//	  "queued": [],
+//    "deploying": [],
+//    "new": [],
+//    "failed": []
+
+
+	queuedEnvironments := jsonGetArray(deploysStatus, "queued")
+	for _, _rawDeploy := range queuedEnvironments {
+		rawDeploy := _rawDeploy.(map[string]interface{})
+		deploy := convertRawDeploy(rawDeploy, Queued, "queued-at")
+		environments[deploy.name] = append(environments[deploy.name], deploy)
+	}
+
+	now := time.Now().Truncate(time.Second)
 	localZone, localZoneOffset := now.Zone()
 	location := time.FixedZone(localZone, localZoneOffset)
 
-	for _, _environment := range deployedEnvironments {
-		environment := _environment.(map[string]interface{})
-		dateString := environment["date"].(string)
+	for environment, deploys := range environments {
+		for _, deploy := range deploys {
+			localDate := deploy.date.In(location)
 
-		date, err := time.Parse(RFC3339Micro, dateString)
-		if err != nil {
-			log.Fatal(err)
+			fmt.Printf("%-45s  %-9s  %s  %v\n", environment, deploy.status, localDate, deploy.date.Sub(now))
+			environment = ""
 		}
-
-		localDate := date.In(location)
-
-		fmt.Printf("%-45s %s	%v\n", environment["environment"], localDate, date.Sub(now))
 	}
 }
