@@ -151,28 +151,41 @@ func displayEnvironments(environmentMap map[string][]Deploy) {
 	}
 }
 
-func main() {
-	var deployStatusJSON []byte
-	var err error
+// Get deploy status from API
+func getRawDeployStatus() map[string]interface{} {
+	rawDeployStatus := map[string]interface{}{}
+	json.Unmarshal(GetDeployStatus(), &rawDeployStatus)
+	return rawDeployStatus
+}
 
-	deployStatusSource := getopt.StringLong("status-source", 'S', "",
-		"File to use instead of deploy status API endpoint")
-	getopt.Parse()
-
-	if *deployStatusSource == "" {
-		deployStatusJSON = GetDeployStatus()
-	} else {
-		deployStatusJSON, err = ioutil.ReadFile(*deployStatusSource)
-		if err != nil {
-			log.Fatal(err)
-		}
+// Get deploy status from file
+func loadRawDeployStatus(source string) map[string]interface{} {
+	deployStatusJSON, err := ioutil.ReadFile(source)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	rawDeployStatus := map[string]interface{}{}
 	json.Unmarshal(deployStatusJSON, &rawDeployStatus)
+	return rawDeployStatus
+}
+
+func main() {
+	var fakeStatus bool
+	getopt.FlagLong(&fakeStatus, "fake-status", 'S',
+		"Treat arguments as list of files to load deploy statuses from.")
+	getopt.Parse()
+	args := getopt.Args()
 
 	environmentMap := map[string][]Deploy{}
-	updateEnvironmentMap(&environmentMap, rawDeployStatus)
+
+	if fakeStatus {
+		for _, source := range args {
+			updateEnvironmentMap(&environmentMap, loadRawDeployStatus(source))
+		}
+	} else {
+		updateEnvironmentMap(&environmentMap, getRawDeployStatus())
+	}
 
 	displayEnvironments(environmentMap)
 }
