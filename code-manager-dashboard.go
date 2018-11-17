@@ -21,6 +21,7 @@ const (
 	Deploying DeployStatus = iota
 	Deployed  DeployStatus = iota
 	Failed    DeployStatus = iota
+	Deleted   DeployStatus = iota
 )
 
 func (status DeployStatus) String() string {
@@ -30,6 +31,7 @@ func (status DeployStatus) String() string {
 		"deploying",
 		"deployed",
 		"failed",
+		"deleted",
 	}
 	return names[status]
 }
@@ -59,14 +61,27 @@ func convertRawDeploy(rawDeploy map[string]interface{}, status DeployStatus, dat
 		}
 	}
 
-	return Deploy{name, status, sha, date, nil}
+	var deployError map[string]interface{}
+
+	if rawDeploy["error"] != nil {
+		deployError = jsonGetObject(rawDeploy, "error")
+
+		if status == Failed && deployError != nil && deployError["msg"] != nil && strings.Contains(deployError["msg"].(string), "cannot be found in any source and will not be deployed.") {
+			// Check for Environment(s) 'combined_minor_changes' cannot be found in any source and will not be deployed.
+			// if it's in the error.msg, then convert this to Delete
+			status = Deleted
+		}
+	}
+
+	return Deploy{name, status, sha, date, deployError}
 }
 
-func convertRawDeploys(deploys *map[string][]Deploy, rawDeploys []interface{}, status DeployStatus, dateKey string) {
+func convertRawDeploys(deploys *map[string][]Deploy, rawDeploys []interface{}, status DeployStatus, dateKey string, environmentsSeen map[string]bool) {
 	for _, _rawDeploy := range rawDeploys {
 		rawDeploy := _rawDeploy.(map[string]interface{})
 		deploy := convertRawDeploy(rawDeploy, status, dateKey)
 		(*deploys)[deploy.name] = append((*deploys)[deploy.name], deploy)
+		environmentsSeen[deploy.name] = true
 	}
 }
 
@@ -93,28 +108,34 @@ func updateEnvironmentMap(environmentMap *map[string][]Deploy, rawDeployStatus m
 	}
 
 	var rawDeploys []interface{}
+	environmentsSeen := map[string]bool{}
 
 	fileSyncStatus := jsonGetObject(rawDeployStatus, "file-sync-storage-status")
 	deploysStatus := jsonGetObject(rawDeployStatus, "deploys-status")
 
 	rawDeploys = jsonGetArray(deploysStatus, "new")
-	convertRawDeploys(environmentMap, rawDeploys, New, "queued-at")
+	convertRawDeploys(environmentMap, rawDeploys, New, "queued-at", environmentsSeen)
 
 	rawDeploys = jsonGetArray(deploysStatus, "queued")
-	convertRawDeploys(environmentMap, rawDeploys, Queued, "queued-at")
+	convertRawDeploys(environmentMap, rawDeploys, Queued, "queued-at", environmentsSeen)
 
 	rawDeploys = jsonGetArray(deploysStatus, "deploying")
-	convertRawDeploys(environmentMap, rawDeploys, Deploying, "queued-at")
+	convertRawDeploys(environmentMap, rawDeploys, Deploying, "queued-at", environmentsSeen)
 
 	rawDeploys = jsonGetArray(fileSyncStatus, "deployed")
-	convertRawDeploys(environmentMap, rawDeploys, Deployed, "date")
+	convertRawDeploys(environmentMap, rawDeploys, Deployed, "date", environmentsSeen)
 
 	rawDeploys = jsonGetArray(deploysStatus, "failed")
-	convertRawDeploys(environmentMap, rawDeploys, Failed, "queued-at")
-
-	/// FIME: Handle deleted environments
+	convertRawDeploys(environmentMap, rawDeploys, Failed, "queued-at", environmentsSeen)
 
 	for name, deploys := range *environmentMap {
+		if ! environmentsSeen[name] && deploys[0].status != Deleted {
+			// This environment is wasn't in the current update, and its last recorded
+			// status isn't Deleted.
+			deploys = append(deploys, Deploy{name, Deleted, "", time.Now(), nil})
+			log.Printf("environment %v deleted", name)
+		}
+
 		uniqueDeploys := []Deploy{}
 
 		// Remove duplicates
