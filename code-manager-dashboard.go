@@ -78,69 +78,26 @@ func jsonGetObject(parent map[string]interface{}, key string) map[string]interfa
 	return parent[key].(map[string]interface{})
 }
 
-func environmentsValues(theMap map[string][]Deploy) [][]Deploy {
-	values := make([][]Deploy, len(theMap))
-	i := 0
-	for _, value := range theMap {
-		values[i] = value
-		i++
-	}
-	return values
-}
+func updateEnvironmentMap(environmentMap *map[string][]Deploy, rawDeployStatus map[string]interface{}) {
+	fileSyncStatus := jsonGetObject(rawDeployStatus, "file-sync-storage-status")
+	deploysStatus := jsonGetObject(rawDeployStatus, "deploys-status")
 
-func main() {
-	var deployStatusResponse []byte
-	var err error
-
-	deployStatusSource := getopt.StringLong("status-source", 'S', "",
-		"File to use instead of deploy status API endpoint")
-	getopt.Parse()
-
-	if *deployStatusSource == "" {
-		deployStatusResponse = GetDeployStatus()
-	} else {
-		deployStatusResponse, err = ioutil.ReadFile(*deployStatusSource)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	environments := map[string][]Deploy{}
-
-	object := map[string]interface{}{}
-	json.Unmarshal(deployStatusResponse, &object)
-
-	fileSyncStatus := jsonGetObject(object, "file-sync-storage-status")
 	rawDeploys := jsonGetArray(fileSyncStatus, "deployed")
-	convertRawDeploys(&environments, rawDeploys, Deployed, "date")
+	convertRawDeploys(environmentMap, rawDeploys, Deployed, "date")
 
-	deploysStatus := jsonGetObject(object, "deploys-status")
 	rawDeploys = jsonGetArray(deploysStatus, "deploying")
-	convertRawDeploys(&environments, rawDeploys, Deploying, "queued-at")
+	convertRawDeploys(environmentMap, rawDeploys, Deploying, "queued-at")
 
 	rawDeploys = jsonGetArray(deploysStatus, "queued")
-	convertRawDeploys(&environments, rawDeploys, Queued, "queued-at")
+	convertRawDeploys(environmentMap, rawDeploys, Queued, "queued-at")
 
 	rawDeploys = jsonGetArray(deploysStatus, "new")
-	convertRawDeploys(&environments, rawDeploys, New, "queued-at")
+	convertRawDeploys(environmentMap, rawDeploys, New, "queued-at")
 
 	rawDeploys = jsonGetArray(deploysStatus, "failed")
-	convertRawDeploys(&environments, rawDeploys, Failed, "queued-at")
+	convertRawDeploys(environmentMap, rawDeploys, Failed, "queued-at")
 
-	sortedEnvironments := environmentsValues(environments)
-	sort.Slice(sortedEnvironments, func(i, j int) bool {
-		a := sortedEnvironments[i]
-		b := sortedEnvironments[j]
-		return strings.ToLower(a[0].name) < strings.ToLower(b[0].name)
-	})
-
-	now := time.Now().Truncate(time.Second)
-	localZone, localZoneOffset := now.Zone()
-	location := time.FixedZone(localZone, localZoneOffset)
-
-	for _, deploys := range sortedEnvironments {
-		environment := deploys[0].name
-
+	for _, deploys := range *environmentMap {
 		sort.Slice(deploys, func(i, j int) bool {
 			a := deploys[i]
 			b := deploys[j]
@@ -154,6 +111,57 @@ func main() {
 				return b.status > a.status
 			}
 		})
+	}
+}
+
+func sortedEnvironments(environmentMap map[string][]Deploy) [][]Deploy {
+	environments := make([][]Deploy, len(environmentMap))
+	i := 0
+	for _, value := range environmentMap {
+		environments[i] = value
+		i++
+	}
+
+	sort.Slice(environments, func(i, j int) bool {
+		a := environments[i]
+		b := environments[j]
+		return strings.ToLower(a[0].name) < strings.ToLower(b[0].name)
+	})
+
+	return environments
+}
+
+func main() {
+	var deployStatusJSON []byte
+	var err error
+
+	deployStatusSource := getopt.StringLong("status-source", 'S', "",
+		"File to use instead of deploy status API endpoint")
+	getopt.Parse()
+
+	if *deployStatusSource == "" {
+		deployStatusJSON = GetDeployStatus()
+	} else {
+		deployStatusJSON, err = ioutil.ReadFile(*deployStatusSource)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	rawDeployStatus := map[string]interface{}{}
+	json.Unmarshal(deployStatusJSON, &rawDeployStatus)
+
+	environmentMap := map[string][]Deploy{}
+	updateEnvironmentMap(&environmentMap, rawDeployStatus)
+
+	environments := sortedEnvironments(environmentMap)
+
+	now := time.Now().Truncate(time.Second)
+	localZone, localZoneOffset := now.Zone()
+	location := time.FixedZone(localZone, localZoneOffset)
+
+	for _, deploys := range environments {
+		environment := deploys[0].name
 
 		for _, deploy := range deploys {
 			localDate := deploy.date.Truncate(time.Second).In(location)
