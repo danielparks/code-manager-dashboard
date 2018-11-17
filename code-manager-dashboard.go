@@ -79,20 +79,22 @@ func jsonGetObject(parent map[string]interface{}, key string) map[string]interfa
 }
 
 func updateEnvironmentMap(environmentMap *map[string][]Deploy, rawDeployStatus map[string]interface{}) {
+	var rawDeploys []interface{}
+
 	fileSyncStatus := jsonGetObject(rawDeployStatus, "file-sync-storage-status")
 	deploysStatus := jsonGetObject(rawDeployStatus, "deploys-status")
 
-	rawDeploys := jsonGetArray(fileSyncStatus, "deployed")
-	convertRawDeploys(environmentMap, rawDeploys, Deployed, "date")
-
-	rawDeploys = jsonGetArray(deploysStatus, "deploying")
-	convertRawDeploys(environmentMap, rawDeploys, Deploying, "queued-at")
+	rawDeploys = jsonGetArray(deploysStatus, "new")
+	convertRawDeploys(environmentMap, rawDeploys, New, "queued-at")
 
 	rawDeploys = jsonGetArray(deploysStatus, "queued")
 	convertRawDeploys(environmentMap, rawDeploys, Queued, "queued-at")
 
-	rawDeploys = jsonGetArray(deploysStatus, "new")
-	convertRawDeploys(environmentMap, rawDeploys, New, "queued-at")
+	rawDeploys = jsonGetArray(deploysStatus, "deploying")
+	convertRawDeploys(environmentMap, rawDeploys, Deploying, "queued-at")
+
+	rawDeploys = jsonGetArray(fileSyncStatus, "deployed")
+	convertRawDeploys(environmentMap, rawDeploys, Deployed, "date")
 
 	rawDeploys = jsonGetArray(deploysStatus, "failed")
 	convertRawDeploys(environmentMap, rawDeploys, Failed, "queued-at")
