@@ -79,6 +79,19 @@ func jsonGetObject(parent map[string]interface{}, key string) map[string]interfa
 }
 
 func updateEnvironmentMap(environmentMap *map[string][]Deploy, rawDeployStatus map[string]interface{}) {
+	// Clear all deployments except for the finished ones — others will be
+	// replaced from the current data.
+	for name, deploys := range *environmentMap {
+		cleanedDeploys := []Deploy{}
+		for _, deploy := range deploys {
+			if deploy.status >= Deployed {
+				// Either Deployed or Failed.
+				cleanedDeploys = append(cleanedDeploys, deploy)
+			}
+		}
+		(*environmentMap)[name] = cleanedDeploys
+	}
+
 	var rawDeploys []interface{}
 
 	fileSyncStatus := jsonGetObject(rawDeployStatus, "file-sync-storage-status")
@@ -99,10 +112,30 @@ func updateEnvironmentMap(environmentMap *map[string][]Deploy, rawDeployStatus m
 	rawDeploys = jsonGetArray(deploysStatus, "failed")
 	convertRawDeploys(environmentMap, rawDeploys, Failed, "queued-at")
 
-	for _, deploys := range *environmentMap {
-		sort.Slice(deploys, func(i, j int) bool {
-			a := deploys[i]
-			b := deploys[j]
+	/// FIME: Handle deleted environments
+
+	for name, deploys := range *environmentMap {
+		uniqueDeploys := []Deploy{}
+
+		// Remove duplicates
+		seen := map[string]bool{}
+		for _, deploy := range deploys {
+			if deploy.status >= Deployed {
+				key := fmt.Sprintf("%s %s %s", deploy.status, deploy.sha, deploy.date)
+				if seen[key] {
+					continue
+				}
+
+				seen[key] = true
+			}
+
+			uniqueDeploys = append(uniqueDeploys, deploy)
+		}
+
+		// Sort
+		sort.Slice(uniqueDeploys, func(i, j int) bool {
+			a := uniqueDeploys[i]
+			b := uniqueDeploys[j]
 			if a.status >= Deployed && b.status >= Deployed {
 				// Either Deployed or Failed. These should be sorted together by date.
 				return a.date.After(b.date)
@@ -113,6 +146,8 @@ func updateEnvironmentMap(environmentMap *map[string][]Deploy, rawDeployStatus m
 				return b.status > a.status
 			}
 		})
+
+		(*environmentMap)[name] = uniqueDeploys
 	}
 }
 
