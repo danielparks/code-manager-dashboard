@@ -131,6 +131,26 @@ func sortedEnvironments(environmentMap map[string][]Deploy) [][]Deploy {
 	return environments
 }
 
+func displayEnvironments(environmentMap map[string][]Deploy) {
+	environments := sortedEnvironments(environmentMap)
+
+	now := time.Now().Truncate(time.Second)
+	localZone, localZoneOffset := now.Zone()
+	location := time.FixedZone(localZone, localZoneOffset)
+
+	for _, deploys := range environments {
+		environment := deploys[0].name
+
+		for _, deploy := range deploys {
+			localDate := deploy.date.Truncate(time.Second).In(location)
+			elapsed := deploy.date.Truncate(time.Second).Sub(now)
+
+			fmt.Printf("%-45s  %-9s  %s  %v\n", environment, deploy.status, localDate, elapsed)
+			environment = ""
+		}
+	}
+}
+
 func main() {
 	var deployStatusJSON []byte
 	var err error
@@ -154,21 +174,5 @@ func main() {
 	environmentMap := map[string][]Deploy{}
 	updateEnvironmentMap(&environmentMap, rawDeployStatus)
 
-	environments := sortedEnvironments(environmentMap)
-
-	now := time.Now().Truncate(time.Second)
-	localZone, localZoneOffset := now.Zone()
-	location := time.FixedZone(localZone, localZoneOffset)
-
-	for _, deploys := range environments {
-		environment := deploys[0].name
-
-		for _, deploy := range deploys {
-			localDate := deploy.date.Truncate(time.Second).In(location)
-			elapsed := deploy.date.Truncate(time.Second).Sub(now)
-
-			fmt.Printf("%-45s  %-9s  %s  %v\n", environment, deploy.status, localDate, elapsed)
-			environment = ""
-		}
-	}
+	displayEnvironments(environmentMap)
 }
