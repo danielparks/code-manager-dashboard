@@ -211,7 +211,11 @@ func displayEnvironments(environmentMap map[string][]Deploy) {
 // Get deploy status from API
 func getRawDeployStatus() map[string]interface{} {
 	rawDeployStatus := map[string]interface{}{}
-	json.Unmarshal(GetDeployStatus(), &rawDeployStatus)
+	err := json.Unmarshal(GetDeployStatus(), &rawDeployStatus)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return rawDeployStatus
 }
 
@@ -223,7 +227,11 @@ func loadRawDeployStatus(source string) map[string]interface{} {
 	}
 
 	rawDeployStatus := map[string]interface{}{}
-	json.Unmarshal(deployStatusJSON, &rawDeployStatus)
+	err = json.Unmarshal(deployStatusJSON, &rawDeployStatus)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return rawDeployStatus
 }
 
