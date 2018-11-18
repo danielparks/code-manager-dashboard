@@ -133,7 +133,6 @@ func updateEnvironmentMap(environmentMap *map[string][]Deploy, rawDeployStatus m
 			// This environment is wasn't in the current update, and its last recorded
 			// status isn't Deleted.
 			deploys = append(deploys, Deploy{name, Deleted, "", time.Now(), nil})
-			log.Printf("environment %v deleted", name)
 		}
 
 		uniqueDeploys := []Deploy{}
