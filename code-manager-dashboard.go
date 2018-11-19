@@ -13,35 +13,12 @@ import (
 
 const RFC3339Micro = "2006-01-02T15:04:05.999Z07:00"
 
-type DeployStatus int
-
-const (
-	New       DeployStatus = iota
-	Queued    DeployStatus = iota
-	Deploying DeployStatus = iota
-	Deployed  DeployStatus = iota
-	Failed    DeployStatus = iota
-	Deleted   DeployStatus = iota
-)
-
-func (status DeployStatus) String() string {
-	names := [...]string{
-		"new",
-		"queued",
-		"deploying",
-		"deployed",
-		"failed",
-		"deleted",
-	}
-	return names[status]
-}
-
 type Deploy struct {
-	name   string
-	status DeployStatus
-	sha    string
-	date   time.Time
-	error  map[string]interface{}
+	Environment string
+	Status      DeployStatus
+	Sha         string
+	Date        time.Time
+	Error       map[string]interface{}
 }
 
 func convertRawDeploy(rawDeploy map[string]interface{}, status DeployStatus, dateKey string) Deploy {
@@ -49,7 +26,7 @@ func convertRawDeploy(rawDeploy map[string]interface{}, status DeployStatus, dat
 	var date time.Time
 	var err error
 
-	name := rawDeploy["environment"].(string)
+	environment := rawDeploy["environment"].(string)
 	if rawDeploy["deploy-signature"] != nil {
 		sha = rawDeploy["deploy-signature"].(string)
 	}
@@ -73,15 +50,16 @@ func convertRawDeploy(rawDeploy map[string]interface{}, status DeployStatus, dat
 		}
 	}
 
-	return Deploy{name, status, sha, date, deployError}
+	return Deploy{environment, status, sha, date, deployError}
 }
 
 func convertRawDeploys(deploys *map[string][]Deploy, rawDeploys []interface{}, status DeployStatus, dateKey string, environmentsSeen map[string]bool) {
 	for _, _rawDeploy := range rawDeploys {
 		rawDeploy := _rawDeploy.(map[string]interface{})
 		deploy := convertRawDeploy(rawDeploy, status, dateKey)
-		(*deploys)[deploy.name] = append((*deploys)[deploy.name], deploy)
-		environmentsSeen[deploy.name] = true
+		environmentDeploys := (*deploys)[deploy.Environment]
+		(*deploys)[deploy.Environment] = append(environmentDeploys, deploy)
+		environmentsSeen[deploy.Environment] = true
 	}
 }
 
@@ -96,15 +74,15 @@ func jsonGetObject(parent map[string]interface{}, key string) map[string]interfa
 func updateEnvironmentMap(environmentMap *map[string][]Deploy, rawDeployStatus map[string]interface{}) {
 	// Clear all deployments except for the finished ones — others will be
 	// replaced from the current data.
-	for name, deploys := range *environmentMap {
+	for environment, deploys := range *environmentMap {
 		cleanedDeploys := []Deploy{}
 		for _, deploy := range deploys {
-			if deploy.status >= Deployed {
+			if deploy.Status >= Deployed {
 				// Either Deployed or Failed.
 				cleanedDeploys = append(cleanedDeploys, deploy)
 			}
 		}
-		(*environmentMap)[name] = cleanedDeploys
+		(*environmentMap)[environment] = cleanedDeploys
 	}
 
 	var rawDeploys []interface{}
@@ -128,11 +106,11 @@ func updateEnvironmentMap(environmentMap *map[string][]Deploy, rawDeployStatus m
 	rawDeploys = jsonGetArray(deploysStatus, "failed")
 	convertRawDeploys(environmentMap, rawDeploys, Failed, "queued-at", environmentsSeen)
 
-	for name, deploys := range *environmentMap {
-		if ! environmentsSeen[name] && deploys[0].status != Deleted {
+	for environment, deploys := range *environmentMap {
+		if !environmentsSeen[environment] && deploys[0].Status != Deleted {
 			// This environment is wasn't in the current update, and its last recorded
 			// status isn't Deleted.
-			deploys = append(deploys, Deploy{name, Deleted, "", time.Now(), nil})
+			deploys = append(deploys, Deploy{environment, Deleted, "", time.Now(), nil})
 		}
 
 		uniqueDeploys := []Deploy{}
@@ -140,8 +118,8 @@ func updateEnvironmentMap(environmentMap *map[string][]Deploy, rawDeployStatus m
 		// Remove duplicates
 		seen := map[string]bool{}
 		for _, deploy := range deploys {
-			if deploy.status >= Deployed {
-				key := fmt.Sprintf("%s %s %s", deploy.status, deploy.sha, deploy.date)
+			if deploy.Status >= Deployed {
+				key := fmt.Sprintf("%s %s %s", deploy.Status, deploy.Sha, deploy.Date)
 				if seen[key] {
 					continue
 				}
@@ -156,18 +134,18 @@ func updateEnvironmentMap(environmentMap *map[string][]Deploy, rawDeployStatus m
 		sort.Slice(uniqueDeploys, func(i, j int) bool {
 			a := uniqueDeploys[i]
 			b := uniqueDeploys[j]
-			if a.status >= Deployed && b.status >= Deployed {
+			if a.Status >= Deployed && b.Status >= Deployed {
 				// Either Deployed or Failed. These should be sorted together by date.
-				return a.date.After(b.date)
-			} else if a.status == b.status {
+				return a.Date.After(b.Date)
+			} else if a.Status == b.Status {
 				// Same status, so sort on date.
-				return a.date.After(b.date)
+				return a.Date.After(b.Date)
 			} else {
-				return b.status > a.status
+				return b.Status > a.Status
 			}
 		})
 
-		(*environmentMap)[name] = uniqueDeploys
+		(*environmentMap)[environment] = uniqueDeploys
 	}
 }
 
@@ -182,7 +160,7 @@ func sortedEnvironments(environmentMap map[string][]Deploy) [][]Deploy {
 	sort.Slice(environments, func(i, j int) bool {
 		a := environments[i]
 		b := environments[j]
-		return strings.ToLower(a[0].name) < strings.ToLower(b[0].name)
+		return strings.ToLower(a[0].Environment) < strings.ToLower(b[0].Environment)
 	})
 
 	return environments
@@ -196,13 +174,13 @@ func displayEnvironments(environmentMap map[string][]Deploy) {
 	location := time.FixedZone(localZone, localZoneOffset)
 
 	for _, deploys := range environments {
-		environment := deploys[0].name
+		environment := deploys[0].Environment
 
 		for _, deploy := range deploys {
-			localDate := deploy.date.Truncate(time.Second).In(location)
-			elapsed := deploy.date.Truncate(time.Second).Sub(now)
+			localDate := deploy.Date.Truncate(time.Second).In(location)
+			elapsed := deploy.Date.Truncate(time.Second).Sub(now)
 
-			fmt.Printf("%-45s  %-9s  %s  %v\n", environment, deploy.status, localDate, elapsed)
+			fmt.Printf("%-45s  %-9s  %s  %v\n", environment, deploy.Status, localDate, elapsed)
 			environment = ""
 		}
 	}
@@ -235,10 +213,27 @@ func loadRawDeployStatus(source string) map[string]interface{} {
 	return rawDeployStatus
 }
 
+func dumpState(environmentMap map[string][]Deploy, path string) error {
+	environmentsJSON, err := json.MarshalIndent(environmentMap, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Dumping state into %q", path)
+
+	/// FIXME should we lock this?
+	return ioutil.WriteFile(path, append(environmentsJSON, '\n'), 0644)
+}
+
 func main() {
 	var fakeStatus bool
-	getopt.FlagLong(&fakeStatus, "fake-status", 'S',
+	getopt.FlagLong(&fakeStatus, "fake-status", 0,
 		"Treat arguments as list of files to load deploy statuses from.")
+
+	var stateFile string
+	getopt.FlagLong(&stateFile, "state-file", 's',
+		"File to store state in.")
+
 	getopt.Parse()
 	args := getopt.Args()
 
@@ -253,4 +248,11 @@ func main() {
 	}
 
 	displayEnvironments(environmentMap)
+
+	if stateFile != "" {
+		err := dumpState(environmentMap, stateFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 }
