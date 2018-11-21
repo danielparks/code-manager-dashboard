@@ -1,0 +1,1498 @@
+{
+  "deploys-status": {
+    "queued": [],
+    "deploying": [],
+    "new": [],
+    "failed": [
+      {
+        "environment": "combined_minor_changes",
+        "queued-at": "2018-11-17T09:14:39.364Z",
+        "error": {
+          "kind": "puppetlabs.code-manager/deploy-failure",
+          "details": {
+            "corrected-env-name": "combined_minor_changes"
+          },
+          "msg": "Errors while deploying environment 'combined_minor_changes' (exit code: 1):\nERROR\t -> Environment(s) 'combined_minor_changes' cannot be found in any source and will not be deployed.\n"
+        }
+      },
+      {
+        "environment": "p9openstack_designate",
+        "queued-at": "2018-11-17T09:14:41.047Z",
+        "error": {
+          "kind": "puppetlabs.code-manager/deploy-failure",
+          "details": {
+            "corrected-env-name": "p9openstack_designate"
+          },
+          "msg": "Errors while deploying environment 'p9openstack_designate' (exit code: 1):\nERROR\t -> Environment(s) 'p9openstack_designate' cannot be found in any source and will not be deployed.\n"
+        }
+      },
+      {
+        "environment": "allusers_gene_account_update",
+        "queued-at": "2018-11-17T09:25:37.815Z",
+        "error": {
+          "kind": "puppetlabs.code-manager/deploy-failure",
+          "details": {
+            "corrected-env-name": "allusers_gene_account_update"
+          },
+          "msg": "Errors while deploying environment 'allusers_gene_account_update' (exit code: 1):\nERROR\t -> Environment(s) 'allusers_gene_account_update' cannot be found in any source and will not be deployed.\n"
+        }
+      }
+    ]
+  },
+  "file-sync-storage-status": {
+    "deployed": [
+      {
+        "environment": "add_qe_staging_jenkins",
+        "date": "2018-11-15T19:26:27.000Z",
+        "deploy-signature": "082058ebf96afcfab1ffe71c10f9112764e55199"
+      },
+      {
+        "environment": "less_swappy",
+        "date": "2018-11-15T19:38:13.000Z",
+        "deploy-signature": "c07fc534ed18ad5e0a555ee8deeaccb169b57a59"
+      },
+      {
+        "environment": "atlas_2500",
+        "date": "2018-11-15T19:30:42.000Z",
+        "deploy-signature": "9ae14ff5b7c17fd223b88c437b6841d7319e28ac"
+      },
+      {
+        "environment": "test_influx_db",
+        "date": "2018-11-15T19:49:41.000Z",
+        "deploy-signature": "d72969a2021aa3b3e4ecf291a88e0572ada2a6a8"
+      },
+      {
+        "environment": "bundle_on_windows",
+        "date": "2018-11-15T19:32:09.000Z",
+        "deploy-signature": "5367215e55f0436081ba814955c312c33c986502"
+      },
+      {
+        "environment": "add_cd4pe",
+        "date": "2018-11-15T19:19:48.000Z",
+        "deploy-signature": "a19e95c1fa6974591fdb55b8b100d326dc357e71"
+      },
+      {
+        "environment": "rubocop",
+        "date": "2018-11-15T19:48:58.000Z",
+        "deploy-signature": "4be000f72253cbb087cc0c6210d8671e71446e20"
+      },
+      {
+        "environment": "rename_aps",
+        "date": "2018-11-15T19:46:32.000Z",
+        "deploy-signature": "24a2f33267a3c69db71f228d4411112cd1f6f27e"
+      },
+      {
+        "environment": "fix_password_hash",
+        "date": "2018-11-15T19:35:17.000Z",
+        "deploy-signature": "de52a57d999521af2a37d2b6386429479ea7ccd5"
+      },
+      {
+        "environment": "update_vmpooler_pools_fc24af42bd12c33ec64a",
+        "date": "2018-11-15T19:51:14.000Z",
+        "deploy-signature": "a423d05e8b7616de792d986bd1b1fe85f2298f47"
+      },
+      {
+        "environment": "allusers_canary",
+        "date": "2018-11-16T01:29:12.000Z",
+        "deploy-signature": "ff8e6d0617332b6f926aac303bb4a56e21eec992"
+      },
+      {
+        "environment": "appveyor_test_branch",
+        "date": "2018-11-15T19:29:57.000Z",
+        "deploy-signature": "2456ecebcfb5541993aa06a2e80241caca28ea42"
+      },
+      {
+        "environment": "jjb",
+        "date": "2018-11-15T19:36:44.000Z",
+        "deploy-signature": "c935070e94d257730a904079e982af76c4e8052c"
+      },
+      {
+        "environment": "persistent_docker_nodes",
+        "date": "2018-11-15T19:42:06.000Z",
+        "deploy-signature": "1d86d3dd3db9bfc013dd84dc636e432b69981313"
+      },
+      {
+        "environment": "pmcmaw_patch_1",
+        "date": "2018-11-15T19:42:56.000Z",
+        "deploy-signature": "407ae6c78a277fdf38f884e56c732ac2b54008d6"
+      },
+      {
+        "environment": "gene_account_update",
+        "date": "2018-11-15T20:11:13.000Z",
+        "deploy-signature": "33658fa1f00c17875a9f494a90fa78990e74ad55"
+      },
+      {
+        "environment": "purge_folders_vmp_2",
+        "date": "2018-11-15T19:44:49.000Z",
+        "deploy-signature": "72942ba5a58a9bea0537289728221f42251212ec"
+      },
+      {
+        "environment": "production",
+        "date": "2018-11-15T20:21:23.000Z",
+        "deploy-signature": "998201c251a9b6432780ab51bbe1d83cb38314d1"
+      },
+      {
+        "environment": "metrics_dashboard_v2",
+        "date": "2018-11-15T19:39:48.000Z",
+        "deploy-signature": "5da4cd688c200e442a0af3cc1ffd5dd7e68d8a81"
+      },
+      {
+        "environment": "dockerized_pe_lbs",
+        "date": "2018-11-16T16:49:15.000Z",
+        "deploy-signature": "43ede2c0eb5e19fa042f88bb77159ba5c7d44d94"
+      },
+      {
+        "environment": "QENG_6294_update_swarm_client",
+        "date": "2018-11-15T19:21:33.000Z",
+        "deploy-signature": "2085b0666b27755a5954a781c79f76ea66deb755"
+      },
+      {
+        "environment": "Drtaylor1701_patch_1",
+        "date": "2018-11-15T19:20:42.000Z",
+        "deploy-signature": "55039b84ca1914c1d2dea1c0765b394ca26fcb56"
+      },
+      {
+        "environment": "add_tintri_glance_settings",
+        "date": "2018-11-15T19:27:11.000Z",
+        "deploy-signature": "b3de0f326be5cd45e5bf015943e76a887caa080b"
+      },
+      {
+        "environment": "mom4433",
+        "date": "2018-11-15T22:00:39.000Z",
+        "deploy-signature": "3ba92d7305c0da92de78768640dec5bc787d69b3"
+      },
+      {
+        "environment": "OFF_16032",
+        "date": "2018-11-15T19:22:16.000Z",
+        "deploy-signature": "2830016f4c7648a24c2e6d108a144481906cff18"
+      },
+      {
+        "environment": "remove_secure_section",
+        "date": "2018-11-15T19:45:50.000Z",
+        "deploy-signature": "eeaff983e6aaf04e42ca2d576bbdb7a094b65712"
+      },
+      {
+        "environment": "netserver_fix",
+        "date": "2018-11-15T19:40:41.000Z",
+        "deploy-signature": "b340048f4ebc2ca0c06de72d2a25a5ff23c7244a"
+      },
+      {
+        "environment": "QENG_6807_reduce_rvm",
+        "date": "2018-11-15T19:23:07.000Z",
+        "deploy-signature": "5d298e7018b6de1f4d7d68acc9ffc127e72d838e"
+      },
+      {
+        "environment": "allusers_win_hyperv",
+        "date": "2018-11-17T09:28:19.000Z",
+        "deploy-signature": "b4695f87c1509b56dfceb49eb9a1b1b4c9cc3725"
+      },
+      {
+        "environment": "kermslack",
+        "date": "2018-11-15T19:37:27.000Z",
+        "deploy-signature": "6c8e75259114921e403c30f72b9e33d3906c82e1"
+      },
+      {
+        "environment": "lighting_server_dhcp",
+        "date": "2018-11-15T19:38:56.000Z",
+        "deploy-signature": "5409fb61c3525f24c1df95deaadb9b8ada77979a"
+      },
+      {
+        "environment": "atlassian_aws",
+        "date": "2018-11-15T19:31:25.000Z",
+        "deploy-signature": "c6145f50b550105476e8d5247895c5715ee4a020"
+      },
+      {
+        "environment": "rm_extra_groups",
+        "date": "2018-11-15T19:47:23.000Z",
+        "deploy-signature": "83fec0b1c0765a811c6bc09b73fa5dc95c522276"
+      },
+      {
+        "environment": "win_profile_metadata",
+        "date": "2018-11-02T23:24:02.000Z",
+        "deploy-signature": "9a59d42bb1d7c9fe8caa32759963ad5e5a653ca5"
+      },
+      {
+        "environment": "test_untrusted_facts",
+        "date": "2018-11-15T19:50:27.000Z",
+        "deploy-signature": "7030f18f406c03727cb1d44bade1d58d7ce1be5d"
+      },
+      {
+        "environment": "add_metrics_to_ci_getpe_prod",
+        "date": "2018-11-15T19:25:33.000Z",
+        "deploy-signature": "be9ad7f1ef54df1083d9aa2ac00532a3fbe349c8"
+      }
+    ]
+  },
+  "file-sync-client-status": {
+    "all-synced": true,
+    "file-sync-clients": {
+      "pe-compiler3-prod.ops.puppetlabs.net": {
+        "last_check_in_time": "2018-11-17T09:37:59.050Z",
+        "synced-with-file-sync-storage": true,
+        "deployed": [
+          {
+            "environment": "less_swappy",
+            "date": "2018-11-15T19:38:13.000Z",
+            "deploy-signature": "c07fc534ed18ad5e0a555ee8deeaccb169b57a59"
+          },
+          {
+            "environment": "atlas_2500",
+            "date": "2018-11-15T19:30:42.000Z",
+            "deploy-signature": "9ae14ff5b7c17fd223b88c437b6841d7319e28ac"
+          },
+          {
+            "environment": "test_influx_db",
+            "date": "2018-11-15T19:49:41.000Z",
+            "deploy-signature": "d72969a2021aa3b3e4ecf291a88e0572ada2a6a8"
+          },
+          {
+            "environment": "bundle_on_windows",
+            "date": "2018-11-15T19:32:09.000Z",
+            "deploy-signature": "5367215e55f0436081ba814955c312c33c986502"
+          },
+          {
+            "environment": "add_cd4pe",
+            "date": "2018-11-15T19:19:48.000Z",
+            "deploy-signature": "a19e95c1fa6974591fdb55b8b100d326dc357e71"
+          },
+          {
+            "environment": "rubocop",
+            "date": "2018-11-15T19:48:58.000Z",
+            "deploy-signature": "4be000f72253cbb087cc0c6210d8671e71446e20"
+          },
+          {
+            "environment": "rename_aps",
+            "date": "2018-11-15T19:46:32.000Z",
+            "deploy-signature": "24a2f33267a3c69db71f228d4411112cd1f6f27e"
+          },
+          {
+            "environment": "fix_password_hash",
+            "date": "2018-11-15T19:35:17.000Z",
+            "deploy-signature": "de52a57d999521af2a37d2b6386429479ea7ccd5"
+          },
+          {
+            "environment": "update_vmpooler_pools_fc24af42bd12c33ec64a",
+            "date": "2018-11-15T19:51:14.000Z",
+            "deploy-signature": "a423d05e8b7616de792d986bd1b1fe85f2298f47"
+          },
+          {
+            "environment": "allusers_canary",
+            "date": "2018-11-16T01:29:12.000Z",
+            "deploy-signature": "ff8e6d0617332b6f926aac303bb4a56e21eec992"
+          },
+          {
+            "environment": "appveyor_test_branch",
+            "date": "2018-11-15T19:29:57.000Z",
+            "deploy-signature": "2456ecebcfb5541993aa06a2e80241caca28ea42"
+          },
+          {
+            "environment": "jjb",
+            "date": "2018-11-15T19:36:44.000Z",
+            "deploy-signature": "c935070e94d257730a904079e982af76c4e8052c"
+          },
+          {
+            "environment": "persistent_docker_nodes",
+            "date": "2018-11-15T19:42:06.000Z",
+            "deploy-signature": "1d86d3dd3db9bfc013dd84dc636e432b69981313"
+          },
+          {
+            "environment": "pmcmaw_patch_1",
+            "date": "2018-11-15T19:42:56.000Z",
+            "deploy-signature": "407ae6c78a277fdf38f884e56c732ac2b54008d6"
+          },
+          {
+            "environment": "gene_account_update",
+            "date": "2018-11-15T20:11:13.000Z",
+            "deploy-signature": "33658fa1f00c17875a9f494a90fa78990e74ad55"
+          },
+          {
+            "environment": "purge_folders_vmp_2",
+            "date": "2018-11-15T19:44:49.000Z",
+            "deploy-signature": "72942ba5a58a9bea0537289728221f42251212ec"
+          },
+          {
+            "environment": "production",
+            "date": "2018-11-15T20:21:23.000Z",
+            "deploy-signature": "998201c251a9b6432780ab51bbe1d83cb38314d1"
+          },
+          {
+            "environment": "metrics_dashboard_v2",
+            "date": "2018-11-15T19:39:48.000Z",
+            "deploy-signature": "5da4cd688c200e442a0af3cc1ffd5dd7e68d8a81"
+          },
+          {
+            "environment": "dockerized_pe_lbs",
+            "date": "2018-11-16T16:49:15.000Z",
+            "deploy-signature": "43ede2c0eb5e19fa042f88bb77159ba5c7d44d94"
+          },
+          {
+            "environment": "QENG_6294_update_swarm_client",
+            "date": "2018-11-15T19:21:33.000Z",
+            "deploy-signature": "2085b0666b27755a5954a781c79f76ea66deb755"
+          },
+          {
+            "environment": "Drtaylor1701_patch_1",
+            "date": "2018-11-15T19:20:42.000Z",
+            "deploy-signature": "55039b84ca1914c1d2dea1c0765b394ca26fcb56"
+          },
+          {
+            "environment": "add_tintri_glance_settings",
+            "date": "2018-11-15T19:27:11.000Z",
+            "deploy-signature": "b3de0f326be5cd45e5bf015943e76a887caa080b"
+          },
+          {
+            "environment": "mom4433",
+            "date": "2018-11-15T22:00:39.000Z",
+            "deploy-signature": "3ba92d7305c0da92de78768640dec5bc787d69b3"
+          },
+          {
+            "environment": "OFF_16032",
+            "date": "2018-11-15T19:22:16.000Z",
+            "deploy-signature": "2830016f4c7648a24c2e6d108a144481906cff18"
+          },
+          {
+            "environment": "remove_secure_section",
+            "date": "2018-11-15T19:45:50.000Z",
+            "deploy-signature": "eeaff983e6aaf04e42ca2d576bbdb7a094b65712"
+          },
+          {
+            "environment": "netserver_fix",
+            "date": "2018-11-15T19:40:41.000Z",
+            "deploy-signature": "b340048f4ebc2ca0c06de72d2a25a5ff23c7244a"
+          },
+          {
+            "environment": "QENG_6807_reduce_rvm",
+            "date": "2018-11-15T19:23:07.000Z",
+            "deploy-signature": "5d298e7018b6de1f4d7d68acc9ffc127e72d838e"
+          },
+          {
+            "environment": "allusers_win_hyperv",
+            "date": "2018-11-17T09:28:19.000Z",
+            "deploy-signature": "b4695f87c1509b56dfceb49eb9a1b1b4c9cc3725"
+          },
+          {
+            "environment": "kermslack",
+            "date": "2018-11-15T19:37:27.000Z",
+            "deploy-signature": "6c8e75259114921e403c30f72b9e33d3906c82e1"
+          },
+          {
+            "environment": "lighting_server_dhcp",
+            "date": "2018-11-15T19:38:56.000Z",
+            "deploy-signature": "5409fb61c3525f24c1df95deaadb9b8ada77979a"
+          },
+          {
+            "environment": "atlassian_aws",
+            "date": "2018-11-15T19:31:25.000Z",
+            "deploy-signature": "c6145f50b550105476e8d5247895c5715ee4a020"
+          },
+          {
+            "environment": "rm_extra_groups",
+            "date": "2018-11-15T19:47:23.000Z",
+            "deploy-signature": "83fec0b1c0765a811c6bc09b73fa5dc95c522276"
+          },
+          {
+            "environment": "win_profile_metadata",
+            "date": "2018-11-02T23:24:02.000Z",
+            "deploy-signature": "9a59d42bb1d7c9fe8caa32759963ad5e5a653ca5"
+          },
+          {
+            "environment": "test_untrusted_facts",
+            "date": "2018-11-15T19:50:27.000Z",
+            "deploy-signature": "7030f18f406c03727cb1d44bade1d58d7ce1be5d"
+          },
+          {
+            "environment": "add_metrics_to_ci_getpe_prod",
+            "date": "2018-11-15T19:25:33.000Z",
+            "deploy-signature": "be9ad7f1ef54df1083d9aa2ac00532a3fbe349c8"
+          }
+        ]
+      },
+      "pe-compiler-prod-6.ops.puppetlabs.net": {
+        "last_check_in_time": "2018-11-17T09:37:57.506Z",
+        "synced-with-file-sync-storage": true,
+        "deployed": [
+          {
+            "environment": "less_swappy",
+            "date": "2018-11-15T19:38:13.000Z",
+            "deploy-signature": "c07fc534ed18ad5e0a555ee8deeaccb169b57a59"
+          },
+          {
+            "environment": "atlas_2500",
+            "date": "2018-11-15T19:30:42.000Z",
+            "deploy-signature": "9ae14ff5b7c17fd223b88c437b6841d7319e28ac"
+          },
+          {
+            "environment": "test_influx_db",
+            "date": "2018-11-15T19:49:41.000Z",
+            "deploy-signature": "d72969a2021aa3b3e4ecf291a88e0572ada2a6a8"
+          },
+          {
+            "environment": "bundle_on_windows",
+            "date": "2018-11-15T19:32:09.000Z",
+            "deploy-signature": "5367215e55f0436081ba814955c312c33c986502"
+          },
+          {
+            "environment": "add_cd4pe",
+            "date": "2018-11-15T19:19:48.000Z",
+            "deploy-signature": "a19e95c1fa6974591fdb55b8b100d326dc357e71"
+          },
+          {
+            "environment": "rubocop",
+            "date": "2018-11-15T19:48:58.000Z",
+            "deploy-signature": "4be000f72253cbb087cc0c6210d8671e71446e20"
+          },
+          {
+            "environment": "rename_aps",
+            "date": "2018-11-15T19:46:32.000Z",
+            "deploy-signature": "24a2f33267a3c69db71f228d4411112cd1f6f27e"
+          },
+          {
+            "environment": "fix_password_hash",
+            "date": "2018-11-15T19:35:17.000Z",
+            "deploy-signature": "de52a57d999521af2a37d2b6386429479ea7ccd5"
+          },
+          {
+            "environment": "update_vmpooler_pools_fc24af42bd12c33ec64a",
+            "date": "2018-11-15T19:51:14.000Z",
+            "deploy-signature": "a423d05e8b7616de792d986bd1b1fe85f2298f47"
+          },
+          {
+            "environment": "allusers_canary",
+            "date": "2018-11-16T01:29:12.000Z",
+            "deploy-signature": "ff8e6d0617332b6f926aac303bb4a56e21eec992"
+          },
+          {
+            "environment": "appveyor_test_branch",
+            "date": "2018-11-15T19:29:57.000Z",
+            "deploy-signature": "2456ecebcfb5541993aa06a2e80241caca28ea42"
+          },
+          {
+            "environment": "jjb",
+            "date": "2018-11-15T19:36:44.000Z",
+            "deploy-signature": "c935070e94d257730a904079e982af76c4e8052c"
+          },
+          {
+            "environment": "persistent_docker_nodes",
+            "date": "2018-11-15T19:42:06.000Z",
+            "deploy-signature": "1d86d3dd3db9bfc013dd84dc636e432b69981313"
+          },
+          {
+            "environment": "pmcmaw_patch_1",
+            "date": "2018-11-15T19:42:56.000Z",
+            "deploy-signature": "407ae6c78a277fdf38f884e56c732ac2b54008d6"
+          },
+          {
+            "environment": "gene_account_update",
+            "date": "2018-11-15T20:11:13.000Z",
+            "deploy-signature": "33658fa1f00c17875a9f494a90fa78990e74ad55"
+          },
+          {
+            "environment": "purge_folders_vmp_2",
+            "date": "2018-11-15T19:44:49.000Z",
+            "deploy-signature": "72942ba5a58a9bea0537289728221f42251212ec"
+          },
+          {
+            "environment": "production",
+            "date": "2018-11-15T20:21:23.000Z",
+            "deploy-signature": "998201c251a9b6432780ab51bbe1d83cb38314d1"
+          },
+          {
+            "environment": "metrics_dashboard_v2",
+            "date": "2018-11-15T19:39:48.000Z",
+            "deploy-signature": "5da4cd688c200e442a0af3cc1ffd5dd7e68d8a81"
+          },
+          {
+            "environment": "dockerized_pe_lbs",
+            "date": "2018-11-16T16:49:15.000Z",
+            "deploy-signature": "43ede2c0eb5e19fa042f88bb77159ba5c7d44d94"
+          },
+          {
+            "environment": "QENG_6294_update_swarm_client",
+            "date": "2018-11-15T19:21:33.000Z",
+            "deploy-signature": "2085b0666b27755a5954a781c79f76ea66deb755"
+          },
+          {
+            "environment": "Drtaylor1701_patch_1",
+            "date": "2018-11-15T19:20:42.000Z",
+            "deploy-signature": "55039b84ca1914c1d2dea1c0765b394ca26fcb56"
+          },
+          {
+            "environment": "add_tintri_glance_settings",
+            "date": "2018-11-15T19:27:11.000Z",
+            "deploy-signature": "b3de0f326be5cd45e5bf015943e76a887caa080b"
+          },
+          {
+            "environment": "mom4433",
+            "date": "2018-11-15T22:00:39.000Z",
+            "deploy-signature": "3ba92d7305c0da92de78768640dec5bc787d69b3"
+          },
+          {
+            "environment": "OFF_16032",
+            "date": "2018-11-15T19:22:16.000Z",
+            "deploy-signature": "2830016f4c7648a24c2e6d108a144481906cff18"
+          },
+          {
+            "environment": "remove_secure_section",
+            "date": "2018-11-15T19:45:50.000Z",
+            "deploy-signature": "eeaff983e6aaf04e42ca2d576bbdb7a094b65712"
+          },
+          {
+            "environment": "netserver_fix",
+            "date": "2018-11-15T19:40:41.000Z",
+            "deploy-signature": "b340048f4ebc2ca0c06de72d2a25a5ff23c7244a"
+          },
+          {
+            "environment": "QENG_6807_reduce_rvm",
+            "date": "2018-11-15T19:23:07.000Z",
+            "deploy-signature": "5d298e7018b6de1f4d7d68acc9ffc127e72d838e"
+          },
+          {
+            "environment": "allusers_win_hyperv",
+            "date": "2018-11-17T09:28:19.000Z",
+            "deploy-signature": "b4695f87c1509b56dfceb49eb9a1b1b4c9cc3725"
+          },
+          {
+            "environment": "kermslack",
+            "date": "2018-11-15T19:37:27.000Z",
+            "deploy-signature": "6c8e75259114921e403c30f72b9e33d3906c82e1"
+          },
+          {
+            "environment": "lighting_server_dhcp",
+            "date": "2018-11-15T19:38:56.000Z",
+            "deploy-signature": "5409fb61c3525f24c1df95deaadb9b8ada77979a"
+          },
+          {
+            "environment": "atlassian_aws",
+            "date": "2018-11-15T19:31:25.000Z",
+            "deploy-signature": "c6145f50b550105476e8d5247895c5715ee4a020"
+          },
+          {
+            "environment": "rm_extra_groups",
+            "date": "2018-11-15T19:47:23.000Z",
+            "deploy-signature": "83fec0b1c0765a811c6bc09b73fa5dc95c522276"
+          },
+          {
+            "environment": "win_profile_metadata",
+            "date": "2018-11-02T23:24:02.000Z",
+            "deploy-signature": "9a59d42bb1d7c9fe8caa32759963ad5e5a653ca5"
+          },
+          {
+            "environment": "test_untrusted_facts",
+            "date": "2018-11-15T19:50:27.000Z",
+            "deploy-signature": "7030f18f406c03727cb1d44bade1d58d7ce1be5d"
+          },
+          {
+            "environment": "add_metrics_to_ci_getpe_prod",
+            "date": "2018-11-15T19:25:33.000Z",
+            "deploy-signature": "be9ad7f1ef54df1083d9aa2ac00532a3fbe349c8"
+          }
+        ]
+      },
+      "pe-compiler4-prod.ops.puppetlabs.net": {
+        "last_check_in_time": "2018-11-17T09:38:00.545Z",
+        "synced-with-file-sync-storage": true,
+        "deployed": [
+          {
+            "environment": "less_swappy",
+            "date": "2018-11-15T19:38:13.000Z",
+            "deploy-signature": "c07fc534ed18ad5e0a555ee8deeaccb169b57a59"
+          },
+          {
+            "environment": "atlas_2500",
+            "date": "2018-11-15T19:30:42.000Z",
+            "deploy-signature": "9ae14ff5b7c17fd223b88c437b6841d7319e28ac"
+          },
+          {
+            "environment": "test_influx_db",
+            "date": "2018-11-15T19:49:41.000Z",
+            "deploy-signature": "d72969a2021aa3b3e4ecf291a88e0572ada2a6a8"
+          },
+          {
+            "environment": "bundle_on_windows",
+            "date": "2018-11-15T19:32:09.000Z",
+            "deploy-signature": "5367215e55f0436081ba814955c312c33c986502"
+          },
+          {
+            "environment": "add_cd4pe",
+            "date": "2018-11-15T19:19:48.000Z",
+            "deploy-signature": "a19e95c1fa6974591fdb55b8b100d326dc357e71"
+          },
+          {
+            "environment": "rubocop",
+            "date": "2018-11-15T19:48:58.000Z",
+            "deploy-signature": "4be000f72253cbb087cc0c6210d8671e71446e20"
+          },
+          {
+            "environment": "rename_aps",
+            "date": "2018-11-15T19:46:32.000Z",
+            "deploy-signature": "24a2f33267a3c69db71f228d4411112cd1f6f27e"
+          },
+          {
+            "environment": "fix_password_hash",
+            "date": "2018-11-15T19:35:17.000Z",
+            "deploy-signature": "de52a57d999521af2a37d2b6386429479ea7ccd5"
+          },
+          {
+            "environment": "update_vmpooler_pools_fc24af42bd12c33ec64a",
+            "date": "2018-11-15T19:51:14.000Z",
+            "deploy-signature": "a423d05e8b7616de792d986bd1b1fe85f2298f47"
+          },
+          {
+            "environment": "allusers_canary",
+            "date": "2018-11-16T01:29:12.000Z",
+            "deploy-signature": "ff8e6d0617332b6f926aac303bb4a56e21eec992"
+          },
+          {
+            "environment": "appveyor_test_branch",
+            "date": "2018-11-15T19:29:57.000Z",
+            "deploy-signature": "2456ecebcfb5541993aa06a2e80241caca28ea42"
+          },
+          {
+            "environment": "jjb",
+            "date": "2018-11-15T19:36:44.000Z",
+            "deploy-signature": "c935070e94d257730a904079e982af76c4e8052c"
+          },
+          {
+            "environment": "persistent_docker_nodes",
+            "date": "2018-11-15T19:42:06.000Z",
+            "deploy-signature": "1d86d3dd3db9bfc013dd84dc636e432b69981313"
+          },
+          {
+            "environment": "pmcmaw_patch_1",
+            "date": "2018-11-15T19:42:56.000Z",
+            "deploy-signature": "407ae6c78a277fdf38f884e56c732ac2b54008d6"
+          },
+          {
+            "environment": "gene_account_update",
+            "date": "2018-11-15T20:11:13.000Z",
+            "deploy-signature": "33658fa1f00c17875a9f494a90fa78990e74ad55"
+          },
+          {
+            "environment": "purge_folders_vmp_2",
+            "date": "2018-11-15T19:44:49.000Z",
+            "deploy-signature": "72942ba5a58a9bea0537289728221f42251212ec"
+          },
+          {
+            "environment": "production",
+            "date": "2018-11-15T20:21:23.000Z",
+            "deploy-signature": "998201c251a9b6432780ab51bbe1d83cb38314d1"
+          },
+          {
+            "environment": "metrics_dashboard_v2",
+            "date": "2018-11-15T19:39:48.000Z",
+            "deploy-signature": "5da4cd688c200e442a0af3cc1ffd5dd7e68d8a81"
+          },
+          {
+            "environment": "dockerized_pe_lbs",
+            "date": "2018-11-16T16:49:15.000Z",
+            "deploy-signature": "43ede2c0eb5e19fa042f88bb77159ba5c7d44d94"
+          },
+          {
+            "environment": "QENG_6294_update_swarm_client",
+            "date": "2018-11-15T19:21:33.000Z",
+            "deploy-signature": "2085b0666b27755a5954a781c79f76ea66deb755"
+          },
+          {
+            "environment": "Drtaylor1701_patch_1",
+            "date": "2018-11-15T19:20:42.000Z",
+            "deploy-signature": "55039b84ca1914c1d2dea1c0765b394ca26fcb56"
+          },
+          {
+            "environment": "add_tintri_glance_settings",
+            "date": "2018-11-15T19:27:11.000Z",
+            "deploy-signature": "b3de0f326be5cd45e5bf015943e76a887caa080b"
+          },
+          {
+            "environment": "mom4433",
+            "date": "2018-11-15T22:00:39.000Z",
+            "deploy-signature": "3ba92d7305c0da92de78768640dec5bc787d69b3"
+          },
+          {
+            "environment": "OFF_16032",
+            "date": "2018-11-15T19:22:16.000Z",
+            "deploy-signature": "2830016f4c7648a24c2e6d108a144481906cff18"
+          },
+          {
+            "environment": "remove_secure_section",
+            "date": "2018-11-15T19:45:50.000Z",
+            "deploy-signature": "eeaff983e6aaf04e42ca2d576bbdb7a094b65712"
+          },
+          {
+            "environment": "netserver_fix",
+            "date": "2018-11-15T19:40:41.000Z",
+            "deploy-signature": "b340048f4ebc2ca0c06de72d2a25a5ff23c7244a"
+          },
+          {
+            "environment": "QENG_6807_reduce_rvm",
+            "date": "2018-11-15T19:23:07.000Z",
+            "deploy-signature": "5d298e7018b6de1f4d7d68acc9ffc127e72d838e"
+          },
+          {
+            "environment": "allusers_win_hyperv",
+            "date": "2018-11-17T09:28:19.000Z",
+            "deploy-signature": "b4695f87c1509b56dfceb49eb9a1b1b4c9cc3725"
+          },
+          {
+            "environment": "kermslack",
+            "date": "2018-11-15T19:37:27.000Z",
+            "deploy-signature": "6c8e75259114921e403c30f72b9e33d3906c82e1"
+          },
+          {
+            "environment": "lighting_server_dhcp",
+            "date": "2018-11-15T19:38:56.000Z",
+            "deploy-signature": "5409fb61c3525f24c1df95deaadb9b8ada77979a"
+          },
+          {
+            "environment": "atlassian_aws",
+            "date": "2018-11-15T19:31:25.000Z",
+            "deploy-signature": "c6145f50b550105476e8d5247895c5715ee4a020"
+          },
+          {
+            "environment": "rm_extra_groups",
+            "date": "2018-11-15T19:47:23.000Z",
+            "deploy-signature": "83fec0b1c0765a811c6bc09b73fa5dc95c522276"
+          },
+          {
+            "environment": "win_profile_metadata",
+            "date": "2018-11-02T23:24:02.000Z",
+            "deploy-signature": "9a59d42bb1d7c9fe8caa32759963ad5e5a653ca5"
+          },
+          {
+            "environment": "test_untrusted_facts",
+            "date": "2018-11-15T19:50:27.000Z",
+            "deploy-signature": "7030f18f406c03727cb1d44bade1d58d7ce1be5d"
+          },
+          {
+            "environment": "add_metrics_to_ci_getpe_prod",
+            "date": "2018-11-15T19:25:33.000Z",
+            "deploy-signature": "be9ad7f1ef54df1083d9aa2ac00532a3fbe349c8"
+          }
+        ]
+      },
+      "pe-compiler1-prod.ops.puppetlabs.net": {
+        "last_check_in_time": "2018-11-17T09:37:59.178Z",
+        "synced-with-file-sync-storage": true,
+        "deployed": [
+          {
+            "environment": "less_swappy",
+            "date": "2018-11-15T19:38:13.000Z",
+            "deploy-signature": "c07fc534ed18ad5e0a555ee8deeaccb169b57a59"
+          },
+          {
+            "environment": "atlas_2500",
+            "date": "2018-11-15T19:30:42.000Z",
+            "deploy-signature": "9ae14ff5b7c17fd223b88c437b6841d7319e28ac"
+          },
+          {
+            "environment": "test_influx_db",
+            "date": "2018-11-15T19:49:41.000Z",
+            "deploy-signature": "d72969a2021aa3b3e4ecf291a88e0572ada2a6a8"
+          },
+          {
+            "environment": "bundle_on_windows",
+            "date": "2018-11-15T19:32:09.000Z",
+            "deploy-signature": "5367215e55f0436081ba814955c312c33c986502"
+          },
+          {
+            "environment": "add_cd4pe",
+            "date": "2018-11-15T19:19:48.000Z",
+            "deploy-signature": "a19e95c1fa6974591fdb55b8b100d326dc357e71"
+          },
+          {
+            "environment": "rubocop",
+            "date": "2018-11-15T19:48:58.000Z",
+            "deploy-signature": "4be000f72253cbb087cc0c6210d8671e71446e20"
+          },
+          {
+            "environment": "rename_aps",
+            "date": "2018-11-15T19:46:32.000Z",
+            "deploy-signature": "24a2f33267a3c69db71f228d4411112cd1f6f27e"
+          },
+          {
+            "environment": "fix_password_hash",
+            "date": "2018-11-15T19:35:17.000Z",
+            "deploy-signature": "de52a57d999521af2a37d2b6386429479ea7ccd5"
+          },
+          {
+            "environment": "update_vmpooler_pools_fc24af42bd12c33ec64a",
+            "date": "2018-11-15T19:51:14.000Z",
+            "deploy-signature": "a423d05e8b7616de792d986bd1b1fe85f2298f47"
+          },
+          {
+            "environment": "allusers_canary",
+            "date": "2018-11-16T01:29:12.000Z",
+            "deploy-signature": "ff8e6d0617332b6f926aac303bb4a56e21eec992"
+          },
+          {
+            "environment": "appveyor_test_branch",
+            "date": "2018-11-15T19:29:57.000Z",
+            "deploy-signature": "2456ecebcfb5541993aa06a2e80241caca28ea42"
+          },
+          {
+            "environment": "jjb",
+            "date": "2018-11-15T19:36:44.000Z",
+            "deploy-signature": "c935070e94d257730a904079e982af76c4e8052c"
+          },
+          {
+            "environment": "persistent_docker_nodes",
+            "date": "2018-11-15T19:42:06.000Z",
+            "deploy-signature": "1d86d3dd3db9bfc013dd84dc636e432b69981313"
+          },
+          {
+            "environment": "pmcmaw_patch_1",
+            "date": "2018-11-15T19:42:56.000Z",
+            "deploy-signature": "407ae6c78a277fdf38f884e56c732ac2b54008d6"
+          },
+          {
+            "environment": "gene_account_update",
+            "date": "2018-11-15T20:11:13.000Z",
+            "deploy-signature": "33658fa1f00c17875a9f494a90fa78990e74ad55"
+          },
+          {
+            "environment": "purge_folders_vmp_2",
+            "date": "2018-11-15T19:44:49.000Z",
+            "deploy-signature": "72942ba5a58a9bea0537289728221f42251212ec"
+          },
+          {
+            "environment": "production",
+            "date": "2018-11-15T20:21:23.000Z",
+            "deploy-signature": "998201c251a9b6432780ab51bbe1d83cb38314d1"
+          },
+          {
+            "environment": "metrics_dashboard_v2",
+            "date": "2018-11-15T19:39:48.000Z",
+            "deploy-signature": "5da4cd688c200e442a0af3cc1ffd5dd7e68d8a81"
+          },
+          {
+            "environment": "dockerized_pe_lbs",
+            "date": "2018-11-16T16:49:15.000Z",
+            "deploy-signature": "43ede2c0eb5e19fa042f88bb77159ba5c7d44d94"
+          },
+          {
+            "environment": "QENG_6294_update_swarm_client",
+            "date": "2018-11-15T19:21:33.000Z",
+            "deploy-signature": "2085b0666b27755a5954a781c79f76ea66deb755"
+          },
+          {
+            "environment": "Drtaylor1701_patch_1",
+            "date": "2018-11-15T19:20:42.000Z",
+            "deploy-signature": "55039b84ca1914c1d2dea1c0765b394ca26fcb56"
+          },
+          {
+            "environment": "add_tintri_glance_settings",
+            "date": "2018-11-15T19:27:11.000Z",
+            "deploy-signature": "b3de0f326be5cd45e5bf015943e76a887caa080b"
+          },
+          {
+            "environment": "mom4433",
+            "date": "2018-11-15T22:00:39.000Z",
+            "deploy-signature": "3ba92d7305c0da92de78768640dec5bc787d69b3"
+          },
+          {
+            "environment": "OFF_16032",
+            "date": "2018-11-15T19:22:16.000Z",
+            "deploy-signature": "2830016f4c7648a24c2e6d108a144481906cff18"
+          },
+          {
+            "environment": "remove_secure_section",
+            "date": "2018-11-15T19:45:50.000Z",
+            "deploy-signature": "eeaff983e6aaf04e42ca2d576bbdb7a094b65712"
+          },
+          {
+            "environment": "netserver_fix",
+            "date": "2018-11-15T19:40:41.000Z",
+            "deploy-signature": "b340048f4ebc2ca0c06de72d2a25a5ff23c7244a"
+          },
+          {
+            "environment": "QENG_6807_reduce_rvm",
+            "date": "2018-11-15T19:23:07.000Z",
+            "deploy-signature": "5d298e7018b6de1f4d7d68acc9ffc127e72d838e"
+          },
+          {
+            "environment": "allusers_win_hyperv",
+            "date": "2018-11-17T09:28:19.000Z",
+            "deploy-signature": "b4695f87c1509b56dfceb49eb9a1b1b4c9cc3725"
+          },
+          {
+            "environment": "kermslack",
+            "date": "2018-11-15T19:37:27.000Z",
+            "deploy-signature": "6c8e75259114921e403c30f72b9e33d3906c82e1"
+          },
+          {
+            "environment": "lighting_server_dhcp",
+            "date": "2018-11-15T19:38:56.000Z",
+            "deploy-signature": "5409fb61c3525f24c1df95deaadb9b8ada77979a"
+          },
+          {
+            "environment": "atlassian_aws",
+            "date": "2018-11-15T19:31:25.000Z",
+            "deploy-signature": "c6145f50b550105476e8d5247895c5715ee4a020"
+          },
+          {
+            "environment": "rm_extra_groups",
+            "date": "2018-11-15T19:47:23.000Z",
+            "deploy-signature": "83fec0b1c0765a811c6bc09b73fa5dc95c522276"
+          },
+          {
+            "environment": "win_profile_metadata",
+            "date": "2018-11-02T23:24:02.000Z",
+            "deploy-signature": "9a59d42bb1d7c9fe8caa32759963ad5e5a653ca5"
+          },
+          {
+            "environment": "test_untrusted_facts",
+            "date": "2018-11-15T19:50:27.000Z",
+            "deploy-signature": "7030f18f406c03727cb1d44bade1d58d7ce1be5d"
+          },
+          {
+            "environment": "add_metrics_to_ci_getpe_prod",
+            "date": "2018-11-15T19:25:33.000Z",
+            "deploy-signature": "be9ad7f1ef54df1083d9aa2ac00532a3fbe349c8"
+          }
+        ]
+      },
+      "pe-compiler2-prod.ops.puppetlabs.net": {
+        "last_check_in_time": "2018-11-17T09:37:58.668Z",
+        "synced-with-file-sync-storage": true,
+        "deployed": [
+          {
+            "environment": "less_swappy",
+            "date": "2018-11-15T19:38:13.000Z",
+            "deploy-signature": "c07fc534ed18ad5e0a555ee8deeaccb169b57a59"
+          },
+          {
+            "environment": "atlas_2500",
+            "date": "2018-11-15T19:30:42.000Z",
+            "deploy-signature": "9ae14ff5b7c17fd223b88c437b6841d7319e28ac"
+          },
+          {
+            "environment": "test_influx_db",
+            "date": "2018-11-15T19:49:41.000Z",
+            "deploy-signature": "d72969a2021aa3b3e4ecf291a88e0572ada2a6a8"
+          },
+          {
+            "environment": "bundle_on_windows",
+            "date": "2018-11-15T19:32:09.000Z",
+            "deploy-signature": "5367215e55f0436081ba814955c312c33c986502"
+          },
+          {
+            "environment": "add_cd4pe",
+            "date": "2018-11-15T19:19:48.000Z",
+            "deploy-signature": "a19e95c1fa6974591fdb55b8b100d326dc357e71"
+          },
+          {
+            "environment": "rubocop",
+            "date": "2018-11-15T19:48:58.000Z",
+            "deploy-signature": "4be000f72253cbb087cc0c6210d8671e71446e20"
+          },
+          {
+            "environment": "rename_aps",
+            "date": "2018-11-15T19:46:32.000Z",
+            "deploy-signature": "24a2f33267a3c69db71f228d4411112cd1f6f27e"
+          },
+          {
+            "environment": "fix_password_hash",
+            "date": "2018-11-15T19:35:17.000Z",
+            "deploy-signature": "de52a57d999521af2a37d2b6386429479ea7ccd5"
+          },
+          {
+            "environment": "update_vmpooler_pools_fc24af42bd12c33ec64a",
+            "date": "2018-11-15T19:51:14.000Z",
+            "deploy-signature": "a423d05e8b7616de792d986bd1b1fe85f2298f47"
+          },
+          {
+            "environment": "allusers_canary",
+            "date": "2018-11-16T01:29:12.000Z",
+            "deploy-signature": "ff8e6d0617332b6f926aac303bb4a56e21eec992"
+          },
+          {
+            "environment": "appveyor_test_branch",
+            "date": "2018-11-15T19:29:57.000Z",
+            "deploy-signature": "2456ecebcfb5541993aa06a2e80241caca28ea42"
+          },
+          {
+            "environment": "jjb",
+            "date": "2018-11-15T19:36:44.000Z",
+            "deploy-signature": "c935070e94d257730a904079e982af76c4e8052c"
+          },
+          {
+            "environment": "persistent_docker_nodes",
+            "date": "2018-11-15T19:42:06.000Z",
+            "deploy-signature": "1d86d3dd3db9bfc013dd84dc636e432b69981313"
+          },
+          {
+            "environment": "pmcmaw_patch_1",
+            "date": "2018-11-15T19:42:56.000Z",
+            "deploy-signature": "407ae6c78a277fdf38f884e56c732ac2b54008d6"
+          },
+          {
+            "environment": "gene_account_update",
+            "date": "2018-11-15T20:11:13.000Z",
+            "deploy-signature": "33658fa1f00c17875a9f494a90fa78990e74ad55"
+          },
+          {
+            "environment": "purge_folders_vmp_2",
+            "date": "2018-11-15T19:44:49.000Z",
+            "deploy-signature": "72942ba5a58a9bea0537289728221f42251212ec"
+          },
+          {
+            "environment": "production",
+            "date": "2018-11-15T20:21:23.000Z",
+            "deploy-signature": "998201c251a9b6432780ab51bbe1d83cb38314d1"
+          },
+          {
+            "environment": "metrics_dashboard_v2",
+            "date": "2018-11-15T19:39:48.000Z",
+            "deploy-signature": "5da4cd688c200e442a0af3cc1ffd5dd7e68d8a81"
+          },
+          {
+            "environment": "dockerized_pe_lbs",
+            "date": "2018-11-16T16:49:15.000Z",
+            "deploy-signature": "43ede2c0eb5e19fa042f88bb77159ba5c7d44d94"
+          },
+          {
+            "environment": "QENG_6294_update_swarm_client",
+            "date": "2018-11-15T19:21:33.000Z",
+            "deploy-signature": "2085b0666b27755a5954a781c79f76ea66deb755"
+          },
+          {
+            "environment": "Drtaylor1701_patch_1",
+            "date": "2018-11-15T19:20:42.000Z",
+            "deploy-signature": "55039b84ca1914c1d2dea1c0765b394ca26fcb56"
+          },
+          {
+            "environment": "add_tintri_glance_settings",
+            "date": "2018-11-15T19:27:11.000Z",
+            "deploy-signature": "b3de0f326be5cd45e5bf015943e76a887caa080b"
+          },
+          {
+            "environment": "mom4433",
+            "date": "2018-11-15T22:00:39.000Z",
+            "deploy-signature": "3ba92d7305c0da92de78768640dec5bc787d69b3"
+          },
+          {
+            "environment": "OFF_16032",
+            "date": "2018-11-15T19:22:16.000Z",
+            "deploy-signature": "2830016f4c7648a24c2e6d108a144481906cff18"
+          },
+          {
+            "environment": "remove_secure_section",
+            "date": "2018-11-15T19:45:50.000Z",
+            "deploy-signature": "eeaff983e6aaf04e42ca2d576bbdb7a094b65712"
+          },
+          {
+            "environment": "netserver_fix",
+            "date": "2018-11-15T19:40:41.000Z",
+            "deploy-signature": "b340048f4ebc2ca0c06de72d2a25a5ff23c7244a"
+          },
+          {
+            "environment": "QENG_6807_reduce_rvm",
+            "date": "2018-11-15T19:23:07.000Z",
+            "deploy-signature": "5d298e7018b6de1f4d7d68acc9ffc127e72d838e"
+          },
+          {
+            "environment": "allusers_win_hyperv",
+            "date": "2018-11-17T09:28:19.000Z",
+            "deploy-signature": "b4695f87c1509b56dfceb49eb9a1b1b4c9cc3725"
+          },
+          {
+            "environment": "kermslack",
+            "date": "2018-11-15T19:37:27.000Z",
+            "deploy-signature": "6c8e75259114921e403c30f72b9e33d3906c82e1"
+          },
+          {
+            "environment": "lighting_server_dhcp",
+            "date": "2018-11-15T19:38:56.000Z",
+            "deploy-signature": "5409fb61c3525f24c1df95deaadb9b8ada77979a"
+          },
+          {
+            "environment": "atlassian_aws",
+            "date": "2018-11-15T19:31:25.000Z",
+            "deploy-signature": "c6145f50b550105476e8d5247895c5715ee4a020"
+          },
+          {
+            "environment": "rm_extra_groups",
+            "date": "2018-11-15T19:47:23.000Z",
+            "deploy-signature": "83fec0b1c0765a811c6bc09b73fa5dc95c522276"
+          },
+          {
+            "environment": "win_profile_metadata",
+            "date": "2018-11-02T23:24:02.000Z",
+            "deploy-signature": "9a59d42bb1d7c9fe8caa32759963ad5e5a653ca5"
+          },
+          {
+            "environment": "test_untrusted_facts",
+            "date": "2018-11-15T19:50:27.000Z",
+            "deploy-signature": "7030f18f406c03727cb1d44bade1d58d7ce1be5d"
+          },
+          {
+            "environment": "add_metrics_to_ci_getpe_prod",
+            "date": "2018-11-15T19:25:33.000Z",
+            "deploy-signature": "be9ad7f1ef54df1083d9aa2ac00532a3fbe349c8"
+          }
+        ]
+      },
+      "pe-mom1-prod.ops.puppetlabs.net": {
+        "last_check_in_time": "2018-11-17T09:37:59.674Z",
+        "synced-with-file-sync-storage": true,
+        "deployed": [
+          {
+            "environment": "less_swappy",
+            "date": "2018-11-15T19:38:13.000Z",
+            "deploy-signature": "c07fc534ed18ad5e0a555ee8deeaccb169b57a59"
+          },
+          {
+            "environment": "atlas_2500",
+            "date": "2018-11-15T19:30:42.000Z",
+            "deploy-signature": "9ae14ff5b7c17fd223b88c437b6841d7319e28ac"
+          },
+          {
+            "environment": "test_influx_db",
+            "date": "2018-11-15T19:49:41.000Z",
+            "deploy-signature": "d72969a2021aa3b3e4ecf291a88e0572ada2a6a8"
+          },
+          {
+            "environment": "bundle_on_windows",
+            "date": "2018-11-15T19:32:09.000Z",
+            "deploy-signature": "5367215e55f0436081ba814955c312c33c986502"
+          },
+          {
+            "environment": "add_cd4pe",
+            "date": "2018-11-15T19:19:48.000Z",
+            "deploy-signature": "a19e95c1fa6974591fdb55b8b100d326dc357e71"
+          },
+          {
+            "environment": "rubocop",
+            "date": "2018-11-15T19:48:58.000Z",
+            "deploy-signature": "4be000f72253cbb087cc0c6210d8671e71446e20"
+          },
+          {
+            "environment": "rename_aps",
+            "date": "2018-11-15T19:46:32.000Z",
+            "deploy-signature": "24a2f33267a3c69db71f228d4411112cd1f6f27e"
+          },
+          {
+            "environment": "fix_password_hash",
+            "date": "2018-11-15T19:35:17.000Z",
+            "deploy-signature": "de52a57d999521af2a37d2b6386429479ea7ccd5"
+          },
+          {
+            "environment": "update_vmpooler_pools_fc24af42bd12c33ec64a",
+            "date": "2018-11-15T19:51:14.000Z",
+            "deploy-signature": "a423d05e8b7616de792d986bd1b1fe85f2298f47"
+          },
+          {
+            "environment": "allusers_canary",
+            "date": "2018-11-16T01:29:12.000Z",
+            "deploy-signature": "ff8e6d0617332b6f926aac303bb4a56e21eec992"
+          },
+          {
+            "environment": "appveyor_test_branch",
+            "date": "2018-11-15T19:29:57.000Z",
+            "deploy-signature": "2456ecebcfb5541993aa06a2e80241caca28ea42"
+          },
+          {
+            "environment": "jjb",
+            "date": "2018-11-15T19:36:44.000Z",
+            "deploy-signature": "c935070e94d257730a904079e982af76c4e8052c"
+          },
+          {
+            "environment": "persistent_docker_nodes",
+            "date": "2018-11-15T19:42:06.000Z",
+            "deploy-signature": "1d86d3dd3db9bfc013dd84dc636e432b69981313"
+          },
+          {
+            "environment": "pmcmaw_patch_1",
+            "date": "2018-11-15T19:42:56.000Z",
+            "deploy-signature": "407ae6c78a277fdf38f884e56c732ac2b54008d6"
+          },
+          {
+            "environment": "gene_account_update",
+            "date": "2018-11-15T20:11:13.000Z",
+            "deploy-signature": "33658fa1f00c17875a9f494a90fa78990e74ad55"
+          },
+          {
+            "environment": "purge_folders_vmp_2",
+            "date": "2018-11-15T19:44:49.000Z",
+            "deploy-signature": "72942ba5a58a9bea0537289728221f42251212ec"
+          },
+          {
+            "environment": "production",
+            "date": "2018-11-15T20:21:23.000Z",
+            "deploy-signature": "998201c251a9b6432780ab51bbe1d83cb38314d1"
+          },
+          {
+            "environment": "metrics_dashboard_v2",
+            "date": "2018-11-15T19:39:48.000Z",
+            "deploy-signature": "5da4cd688c200e442a0af3cc1ffd5dd7e68d8a81"
+          },
+          {
+            "environment": "dockerized_pe_lbs",
+            "date": "2018-11-16T16:49:15.000Z",
+            "deploy-signature": "43ede2c0eb5e19fa042f88bb77159ba5c7d44d94"
+          },
+          {
+            "environment": "QENG_6294_update_swarm_client",
+            "date": "2018-11-15T19:21:33.000Z",
+            "deploy-signature": "2085b0666b27755a5954a781c79f76ea66deb755"
+          },
+          {
+            "environment": "Drtaylor1701_patch_1",
+            "date": "2018-11-15T19:20:42.000Z",
+            "deploy-signature": "55039b84ca1914c1d2dea1c0765b394ca26fcb56"
+          },
+          {
+            "environment": "add_tintri_glance_settings",
+            "date": "2018-11-15T19:27:11.000Z",
+            "deploy-signature": "b3de0f326be5cd45e5bf015943e76a887caa080b"
+          },
+          {
+            "environment": "mom4433",
+            "date": "2018-11-15T22:00:39.000Z",
+            "deploy-signature": "3ba92d7305c0da92de78768640dec5bc787d69b3"
+          },
+          {
+            "environment": "OFF_16032",
+            "date": "2018-11-15T19:22:16.000Z",
+            "deploy-signature": "2830016f4c7648a24c2e6d108a144481906cff18"
+          },
+          {
+            "environment": "remove_secure_section",
+            "date": "2018-11-15T19:45:50.000Z",
+            "deploy-signature": "eeaff983e6aaf04e42ca2d576bbdb7a094b65712"
+          },
+          {
+            "environment": "netserver_fix",
+            "date": "2018-11-15T19:40:41.000Z",
+            "deploy-signature": "b340048f4ebc2ca0c06de72d2a25a5ff23c7244a"
+          },
+          {
+            "environment": "QENG_6807_reduce_rvm",
+            "date": "2018-11-15T19:23:07.000Z",
+            "deploy-signature": "5d298e7018b6de1f4d7d68acc9ffc127e72d838e"
+          },
+          {
+            "environment": "allusers_win_hyperv",
+            "date": "2018-11-17T09:28:19.000Z",
+            "deploy-signature": "b4695f87c1509b56dfceb49eb9a1b1b4c9cc3725"
+          },
+          {
+            "environment": "kermslack",
+            "date": "2018-11-15T19:37:27.000Z",
+            "deploy-signature": "6c8e75259114921e403c30f72b9e33d3906c82e1"
+          },
+          {
+            "environment": "lighting_server_dhcp",
+            "date": "2018-11-15T19:38:56.000Z",
+            "deploy-signature": "5409fb61c3525f24c1df95deaadb9b8ada77979a"
+          },
+          {
+            "environment": "atlassian_aws",
+            "date": "2018-11-15T19:31:25.000Z",
+            "deploy-signature": "c6145f50b550105476e8d5247895c5715ee4a020"
+          },
+          {
+            "environment": "rm_extra_groups",
+            "date": "2018-11-15T19:47:23.000Z",
+            "deploy-signature": "83fec0b1c0765a811c6bc09b73fa5dc95c522276"
+          },
+          {
+            "environment": "win_profile_metadata",
+            "date": "2018-11-02T23:24:02.000Z",
+            "deploy-signature": "9a59d42bb1d7c9fe8caa32759963ad5e5a653ca5"
+          },
+          {
+            "environment": "test_untrusted_facts",
+            "date": "2018-11-15T19:50:27.000Z",
+            "deploy-signature": "7030f18f406c03727cb1d44bade1d58d7ce1be5d"
+          },
+          {
+            "environment": "add_metrics_to_ci_getpe_prod",
+            "date": "2018-11-15T19:25:33.000Z",
+            "deploy-signature": "be9ad7f1ef54df1083d9aa2ac00532a3fbe349c8"
+          }
+        ]
+      },
+      "pe-compiler5-prod.ops.puppetlabs.net": {
+        "last_check_in_time": "2018-11-17T09:37:59.511Z",
+        "synced-with-file-sync-storage": true,
+        "deployed": [
+          {
+            "environment": "less_swappy",
+            "date": "2018-11-15T19:38:13.000Z",
+            "deploy-signature": "c07fc534ed18ad5e0a555ee8deeaccb169b57a59"
+          },
+          {
+            "environment": "atlas_2500",
+            "date": "2018-11-15T19:30:42.000Z",
+            "deploy-signature": "9ae14ff5b7c17fd223b88c437b6841d7319e28ac"
+          },
+          {
+            "environment": "test_influx_db",
+            "date": "2018-11-15T19:49:41.000Z",
+            "deploy-signature": "d72969a2021aa3b3e4ecf291a88e0572ada2a6a8"
+          },
+          {
+            "environment": "bundle_on_windows",
+            "date": "2018-11-15T19:32:09.000Z",
+            "deploy-signature": "5367215e55f0436081ba814955c312c33c986502"
+          },
+          {
+            "environment": "add_cd4pe",
+            "date": "2018-11-15T19:19:48.000Z",
+            "deploy-signature": "a19e95c1fa6974591fdb55b8b100d326dc357e71"
+          },
+          {
+            "environment": "rubocop",
+            "date": "2018-11-15T19:48:58.000Z",
+            "deploy-signature": "4be000f72253cbb087cc0c6210d8671e71446e20"
+          },
+          {
+            "environment": "rename_aps",
+            "date": "2018-11-15T19:46:32.000Z",
+            "deploy-signature": "24a2f33267a3c69db71f228d4411112cd1f6f27e"
+          },
+          {
+            "environment": "fix_password_hash",
+            "date": "2018-11-15T19:35:17.000Z",
+            "deploy-signature": "de52a57d999521af2a37d2b6386429479ea7ccd5"
+          },
+          {
+            "environment": "update_vmpooler_pools_fc24af42bd12c33ec64a",
+            "date": "2018-11-15T19:51:14.000Z",
+            "deploy-signature": "a423d05e8b7616de792d986bd1b1fe85f2298f47"
+          },
+          {
+            "environment": "allusers_canary",
+            "date": "2018-11-16T01:29:12.000Z",
+            "deploy-signature": "ff8e6d0617332b6f926aac303bb4a56e21eec992"
+          },
+          {
+            "environment": "appveyor_test_branch",
+            "date": "2018-11-15T19:29:57.000Z",
+            "deploy-signature": "2456ecebcfb5541993aa06a2e80241caca28ea42"
+          },
+          {
+            "environment": "jjb",
+            "date": "2018-11-15T19:36:44.000Z",
+            "deploy-signature": "c935070e94d257730a904079e982af76c4e8052c"
+          },
+          {
+            "environment": "persistent_docker_nodes",
+            "date": "2018-11-15T19:42:06.000Z",
+            "deploy-signature": "1d86d3dd3db9bfc013dd84dc636e432b69981313"
+          },
+          {
+            "environment": "pmcmaw_patch_1",
+            "date": "2018-11-15T19:42:56.000Z",
+            "deploy-signature": "407ae6c78a277fdf38f884e56c732ac2b54008d6"
+          },
+          {
+            "environment": "gene_account_update",
+            "date": "2018-11-15T20:11:13.000Z",
+            "deploy-signature": "33658fa1f00c17875a9f494a90fa78990e74ad55"
+          },
+          {
+            "environment": "purge_folders_vmp_2",
+            "date": "2018-11-15T19:44:49.000Z",
+            "deploy-signature": "72942ba5a58a9bea0537289728221f42251212ec"
+          },
+          {
+            "environment": "production",
+            "date": "2018-11-15T20:21:23.000Z",
+            "deploy-signature": "998201c251a9b6432780ab51bbe1d83cb38314d1"
+          },
+          {
+            "environment": "metrics_dashboard_v2",
+            "date": "2018-11-15T19:39:48.000Z",
+            "deploy-signature": "5da4cd688c200e442a0af3cc1ffd5dd7e68d8a81"
+          },
+          {
+            "environment": "dockerized_pe_lbs",
+            "date": "2018-11-16T16:49:15.000Z",
+            "deploy-signature": "43ede2c0eb5e19fa042f88bb77159ba5c7d44d94"
+          },
+          {
+            "environment": "QENG_6294_update_swarm_client",
+            "date": "2018-11-15T19:21:33.000Z",
+            "deploy-signature": "2085b0666b27755a5954a781c79f76ea66deb755"
+          },
+          {
+            "environment": "Drtaylor1701_patch_1",
+            "date": "2018-11-15T19:20:42.000Z",
+            "deploy-signature": "55039b84ca1914c1d2dea1c0765b394ca26fcb56"
+          },
+          {
+            "environment": "add_tintri_glance_settings",
+            "date": "2018-11-15T19:27:11.000Z",
+            "deploy-signature": "b3de0f326be5cd45e5bf015943e76a887caa080b"
+          },
+          {
+            "environment": "mom4433",
+            "date": "2018-11-15T22:00:39.000Z",
+            "deploy-signature": "3ba92d7305c0da92de78768640dec5bc787d69b3"
+          },
+          {
+            "environment": "OFF_16032",
+            "date": "2018-11-15T19:22:16.000Z",
+            "deploy-signature": "2830016f4c7648a24c2e6d108a144481906cff18"
+          },
+          {
+            "environment": "remove_secure_section",
+            "date": "2018-11-15T19:45:50.000Z",
+            "deploy-signature": "eeaff983e6aaf04e42ca2d576bbdb7a094b65712"
+          },
+          {
+            "environment": "netserver_fix",
+            "date": "2018-11-15T19:40:41.000Z",
+            "deploy-signature": "b340048f4ebc2ca0c06de72d2a25a5ff23c7244a"
+          },
+          {
+            "environment": "QENG_6807_reduce_rvm",
+            "date": "2018-11-15T19:23:07.000Z",
+            "deploy-signature": "5d298e7018b6de1f4d7d68acc9ffc127e72d838e"
+          },
+          {
+            "environment": "allusers_win_hyperv",
+            "date": "2018-11-17T09:28:19.000Z",
+            "deploy-signature": "b4695f87c1509b56dfceb49eb9a1b1b4c9cc3725"
+          },
+          {
+            "environment": "kermslack",
+            "date": "2018-11-15T19:37:27.000Z",
+            "deploy-signature": "6c8e75259114921e403c30f72b9e33d3906c82e1"
+          },
+          {
+            "environment": "lighting_server_dhcp",
+            "date": "2018-11-15T19:38:56.000Z",
+            "deploy-signature": "5409fb61c3525f24c1df95deaadb9b8ada77979a"
+          },
+          {
+            "environment": "atlassian_aws",
+            "date": "2018-11-15T19:31:25.000Z",
+            "deploy-signature": "c6145f50b550105476e8d5247895c5715ee4a020"
+          },
+          {
+            "environment": "rm_extra_groups",
+            "date": "2018-11-15T19:47:23.000Z",
+            "deploy-signature": "83fec0b1c0765a811c6bc09b73fa5dc95c522276"
+          },
+          {
+            "environment": "win_profile_metadata",
+            "date": "2018-11-02T23:24:02.000Z",
+            "deploy-signature": "9a59d42bb1d7c9fe8caa32759963ad5e5a653ca5"
+          },
+          {
+            "environment": "test_untrusted_facts",
+            "date": "2018-11-15T19:50:27.000Z",
+            "deploy-signature": "7030f18f406c03727cb1d44bade1d58d7ce1be5d"
+          },
+          {
+            "environment": "add_metrics_to_ci_getpe_prod",
+            "date": "2018-11-15T19:25:33.000Z",
+            "deploy-signature": "be9ad7f1ef54df1083d9aa2ac00532a3fbe349c8"
+          }
+        ]
+      }
+    }
+  }
+}
