@@ -259,7 +259,9 @@ func main() {
 			updateEnvironmentMap(&environmentMap, loadRawCodeState(source))
 		}
 	} else {
-		updateEnvironmentMap(&environmentMap, GetRawCodeState(server, port))
+		tlsConfig := LoadCaCert("/Users/daniel/work/puppetca.ops.puppetlabs.net.pem")
+		rawCodeState := GetRawCodeState(server, port, &tlsConfig)
+		updateEnvironmentMap(&environmentMap, rawCodeState)
 	}
 
 	displayEnvironments(environmentMap)

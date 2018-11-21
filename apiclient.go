@@ -12,11 +12,9 @@ import (
 	"time"
 )
 
-// Create an http.Client that recognizes the Puppet CA.
-func httpClient() *http.Client {
-	caCertPath := "/Users/daniel/work/puppetca.ops.puppetlabs.net.pem"
-
-	caCert, err := ioutil.ReadFile(caCertPath)
+// Create a tls.Config that recognizes a named CA cert
+func LoadCaCert(path string) tls.Config {
+	caCert, err := ioutil.ReadFile(path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -24,18 +22,19 @@ func httpClient() *http.Client {
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caCert)
 
-	tlsConfig := &tls.Config{
+	return tls.Config{
 		RootCAs: caCertPool,
 	}
-	transport := &http.Transport{TLSClientConfig: tlsConfig}
+}
 
+func httpClient(tlsConfig *tls.Config) *http.Client {
 	return &http.Client{
-		Transport: transport,
+		Transport: &http.Transport{TLSClientConfig: tlsConfig},
 		Timeout:   60 * time.Second,
 	}
 }
 
-func getRawCodeStateJson(server string, port uint16) []byte {
+func getRawCodeStateJson(server string, port uint16, tlsConfig *tls.Config) []byte {
 	url := fmt.Sprintf("https://%s:%d/code-manager/v1/deploys/status", server, port)
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -46,7 +45,7 @@ func getRawCodeStateJson(server string, port uint16) []byte {
 	request.Header.Set("Accept", "application/json")
 	request.Header.Set("X-Authentication", pe_token)
 
-	response, err := httpClient().Do(request)
+	response, err := httpClient(tlsConfig).Do(request)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -63,9 +62,9 @@ func getRawCodeStateJson(server string, port uint16) []byte {
 	return body
 }
 
-func GetRawCodeState(server string, port uint16) map[string]interface{} {
+func GetRawCodeState(server string, port uint16, tlsConfig *tls.Config) map[string]interface{} {
 	codeState := map[string]interface{}{}
-	err := json.Unmarshal(getRawCodeStateJson(server, port), &codeState)
+	err := json.Unmarshal(getRawCodeStateJson(server, port, tlsConfig), &codeState)
 	if err != nil {
 		log.Fatal(err)
 	}
