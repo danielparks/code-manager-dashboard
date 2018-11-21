@@ -206,7 +206,7 @@ func loadRawCodeState(source string) map[string]interface{} {
 func readState(path string) (map[string][]Deploy, error) {
 	state := map[string][]Deploy{}
 
-	stateJSON, err := ioutil.ReadFile(path)
+	stateJson, err := ioutil.ReadFile(path)
 	if os.IsNotExist(err) {
 		return state, nil
 	}
@@ -215,18 +215,18 @@ func readState(path string) (map[string][]Deploy, error) {
 		return nil, err
 	}
 
-	err = json.Unmarshal(stateJSON, &state)
+	err = json.Unmarshal(stateJson, &state)
 	return state, err
 }
 
 func dumpState(environmentMap map[string][]Deploy, path string) error {
-	stateJSON, err := json.MarshalIndent(environmentMap, "", "  ")
+	stateJson, err := json.MarshalIndent(environmentMap, "", "  ")
 	if err != nil {
 		return err
 	}
 
 	/// FIXME should we lock this?
-	return ioutil.WriteFile(path, append(stateJSON, '\n'), 0644)
+	return ioutil.WriteFile(path, append(stateJson, '\n'), 0644)
 }
 
 func main() {
