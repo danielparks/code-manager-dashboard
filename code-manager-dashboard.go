@@ -6,6 +6,7 @@ import (
 	"github.com/pborman/getopt/v2"
 	"io/ioutil"
 	"log"
+	"os"
 	"sort"
 	"strings"
 	"time"
@@ -213,16 +214,30 @@ func loadRawDeployStatus(source string) map[string]interface{} {
 	return rawDeployStatus
 }
 
+func readState(path string) (map[string][]Deploy, error) {
+	state := map[string][]Deploy{}
+
+	stateJSON, err := ioutil.ReadFile(path)
+	if os.IsNotExist(err) {
+		return state, nil
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(stateJSON, &state)
+	return state, err
+}
+
 func dumpState(environmentMap map[string][]Deploy, path string) error {
-	environmentsJSON, err := json.MarshalIndent(environmentMap, "", "  ")
+	stateJSON, err := json.MarshalIndent(environmentMap, "", "  ")
 	if err != nil {
 		return err
 	}
 
-	log.Printf("Dumping state into %q", path)
-
 	/// FIXME should we lock this?
-	return ioutil.WriteFile(path, append(environmentsJSON, '\n'), 0644)
+	return ioutil.WriteFile(path, append(stateJSON, '\n'), 0644)
 }
 
 func main() {
@@ -237,7 +252,15 @@ func main() {
 	getopt.Parse()
 	args := getopt.Args()
 
-	environmentMap := map[string][]Deploy{}
+	var environmentMap map[string][]Deploy
+	var err error
+
+	if stateFile != "" {
+		environmentMap, err = readState(stateFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 
 	if fakeStatus {
 		for _, source := range args {
@@ -250,7 +273,7 @@ func main() {
 	displayEnvironments(environmentMap)
 
 	if stateFile != "" {
-		err := dumpState(environmentMap, stateFile)
+		err = dumpState(environmentMap, stateFile)
 		if err != nil {
 			log.Fatal(err)
 		}
