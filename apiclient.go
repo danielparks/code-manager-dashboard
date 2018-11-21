@@ -34,11 +34,8 @@ func httpClient() *http.Client {
 	}
 }
 
-func GetDeployStatus() []byte {
-	server := "pe-mom1-prod.ops.puppetlabs.net"
-	port := "8170"
-
-	url := fmt.Sprintf("https://%s:%s/code-manager/v1/deploys/status", server, port)
+func GetDeployStatus(server string, port uint16) []byte {
+	url := fmt.Sprintf("https://%s:%d/code-manager/v1/deploys/status", server, port)
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Panic(err)

@@ -188,9 +188,9 @@ func displayEnvironments(environmentMap map[string][]Deploy) {
 }
 
 // Get deploy status from API
-func getRawDeployStatus() map[string]interface{} {
+func getRawDeployStatus(server string, port uint16) map[string]interface{} {
 	rawDeployStatus := map[string]interface{}{}
-	err := json.Unmarshal(GetDeployStatus(), &rawDeployStatus)
+	err := json.Unmarshal(GetDeployStatus(server, port), &rawDeployStatus)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -252,6 +252,9 @@ func main() {
 	getopt.Parse()
 	args := getopt.Args()
 
+	server := "pe-mom1-prod.ops.puppetlabs.net"
+	var port uint16 = 8170
+
 	var environmentMap map[string][]Deploy
 	var err error
 
@@ -267,7 +270,7 @@ func main() {
 			updateEnvironmentMap(&environmentMap, loadRawDeployStatus(source))
 		}
 	} else {
-		updateEnvironmentMap(&environmentMap, getRawDeployStatus())
+		updateEnvironmentMap(&environmentMap, getRawDeployStatus(server, port))
 	}
 
 	displayEnvironments(environmentMap)
