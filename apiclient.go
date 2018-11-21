@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -34,7 +35,7 @@ func httpClient() *http.Client {
 	}
 }
 
-func GetDeployStatus(server string, port uint16) []byte {
+func getRawCodeStateJson(server string, port uint16) []byte {
 	url := fmt.Sprintf("https://%s:%d/code-manager/v1/deploys/status", server, port)
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -60,4 +61,14 @@ func GetDeployStatus(server string, port uint16) []byte {
 	}
 
 	return body
+}
+
+func GetRawCodeState(server string, port uint16) map[string]interface{} {
+	codeState := map[string]interface{}{}
+	err := json.Unmarshal(getRawCodeStateJson(server, port), &codeState)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return codeState
 }

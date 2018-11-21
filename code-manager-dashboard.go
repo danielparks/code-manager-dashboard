@@ -72,7 +72,7 @@ func jsonGetObject(parent map[string]interface{}, key string) map[string]interfa
 	return parent[key].(map[string]interface{})
 }
 
-func updateEnvironmentMap(environmentMap *map[string][]Deploy, rawDeployStatus map[string]interface{}) {
+func updateEnvironmentMap(environmentMap *map[string][]Deploy, rawCodeState map[string]interface{}) {
 	// Clear all deployments except for the finished ones — others will be
 	// replaced from the current data.
 	for environment, deploys := range *environmentMap {
@@ -89,8 +89,8 @@ func updateEnvironmentMap(environmentMap *map[string][]Deploy, rawDeployStatus m
 	var rawDeploys []interface{}
 	environmentsSeen := map[string]bool{}
 
-	fileSyncStatus := jsonGetObject(rawDeployStatus, "file-sync-storage-status")
-	deploysStatus := jsonGetObject(rawDeployStatus, "deploys-status")
+	fileSyncStatus := jsonGetObject(rawCodeState, "file-sync-storage-status")
+	deploysStatus := jsonGetObject(rawCodeState, "deploys-status")
 
 	rawDeploys = jsonGetArray(deploysStatus, "new")
 	convertRawDeploys(environmentMap, rawDeploys, New, "queued-at", environmentsSeen)
@@ -187,31 +187,20 @@ func displayEnvironments(environmentMap map[string][]Deploy) {
 	}
 }
 
-// Get deploy status from API
-func getRawDeployStatus(server string, port uint16) map[string]interface{} {
-	rawDeployStatus := map[string]interface{}{}
-	err := json.Unmarshal(GetDeployStatus(server, port), &rawDeployStatus)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return rawDeployStatus
-}
-
 // Get deploy status from file
-func loadRawDeployStatus(source string) map[string]interface{} {
-	deployStatusJSON, err := ioutil.ReadFile(source)
+func loadRawCodeState(source string) map[string]interface{} {
+	codeStateJson, err := ioutil.ReadFile(source)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	rawDeployStatus := map[string]interface{}{}
-	err = json.Unmarshal(deployStatusJSON, &rawDeployStatus)
+	rawCodeState := map[string]interface{}{}
+	err = json.Unmarshal(codeStateJson, &rawCodeState)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return rawDeployStatus
+	return rawCodeState
 }
 
 func readState(path string) (map[string][]Deploy, error) {
@@ -267,10 +256,10 @@ func main() {
 
 	if fakeStatus {
 		for _, source := range args {
-			updateEnvironmentMap(&environmentMap, loadRawDeployStatus(source))
+			updateEnvironmentMap(&environmentMap, loadRawCodeState(source))
 		}
 	} else {
-		updateEnvironmentMap(&environmentMap, getRawDeployStatus(server, port))
+		updateEnvironmentMap(&environmentMap, GetRawCodeState(server, port))
 	}
 
 	displayEnvironments(environmentMap)
