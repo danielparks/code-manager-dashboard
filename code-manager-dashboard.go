@@ -242,7 +242,7 @@ func main() {
 	args := getopt.Args()
 
 	server := "pe-mom1-prod.ops.puppetlabs.net"
-	var port uint16 = 8170
+	caPath := "/Users/daniel/work/puppetca.ops.puppetlabs.net.pem"
 
 	var environmentMap map[string][]Deploy
 	var err error
@@ -259,8 +259,8 @@ func main() {
 			updateEnvironmentMap(&environmentMap, loadRawCodeState(source))
 		}
 	} else {
-		tlsConfig := LoadCaCert("/Users/daniel/work/puppetca.ops.puppetlabs.net.pem")
-		rawCodeState := GetRawCodeState(server, port, &tlsConfig)
+		apiClient := TypicalApiClient(server, os.Getenv("pe_token"), caPath)
+		rawCodeState := apiClient.GetRawCodeState()
 		updateEnvironmentMap(&environmentMap, rawCodeState)
 	}
 

@@ -8,12 +8,27 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"time"
 )
 
+type ApiClient struct {
+	Host       string
+	Port       uint16
+	RbacToken  string
+	HttpClient *http.Client
+}
+
+func TypicalApiClient(host string, rbacToken string, caPath string) *ApiClient {
+	return &ApiClient{
+		Host: host,
+		Port: 8170,
+		RbacToken: rbacToken,
+		HttpClient: ApiHttpClient(LoadCaCert(caPath)),
+	}
+}
+
 // Create a tls.Config that recognizes a named CA cert
-func LoadCaCert(path string) tls.Config {
+func LoadCaCert(path string) *tls.Config {
 	caCert, err := ioutil.ReadFile(path)
 	if err != nil {
 		log.Fatal(err)
@@ -22,30 +37,34 @@ func LoadCaCert(path string) tls.Config {
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caCert)
 
-	return tls.Config{
+	return &tls.Config{
 		RootCAs: caCertPool,
 	}
 }
 
-func httpClient(tlsConfig *tls.Config) *http.Client {
+func ApiHttpClient(tlsConfig *tls.Config) *http.Client {
 	return &http.Client{
 		Transport: &http.Transport{TLSClientConfig: tlsConfig},
 		Timeout:   60 * time.Second,
 	}
 }
 
-func getRawCodeStateJson(server string, port uint16, tlsConfig *tls.Config) []byte {
-	url := fmt.Sprintf("https://%s:%d/code-manager/v1/deploys/status", server, port)
+func getRawCodeStateJson(client *ApiClient) []byte {
+	url := fmt.Sprintf("https://%s:%d/code-manager/v1/deploys/status",
+		client.Host, client.Port)
+
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	pe_token := os.Getenv("pe_token")
 	request.Header.Set("Accept", "application/json")
-	request.Header.Set("X-Authentication", pe_token)
 
-	response, err := httpClient(tlsConfig).Do(request)
+	if client.RbacToken != "" {
+		request.Header.Set("X-Authentication", client.RbacToken)
+	}
+
+	response, err := client.HttpClient.Do(request)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -62,9 +81,9 @@ func getRawCodeStateJson(server string, port uint16, tlsConfig *tls.Config) []by
 	return body
 }
 
-func GetRawCodeState(server string, port uint16, tlsConfig *tls.Config) map[string]interface{} {
+func (client *ApiClient) GetRawCodeState() map[string]interface{} {
 	codeState := map[string]interface{}{}
-	err := json.Unmarshal(getRawCodeStateJson(server, port, tlsConfig), &codeState)
+	err := json.Unmarshal(getRawCodeStateJson(client), &codeState)
 	if err != nil {
 		log.Fatal(err)
 	}
