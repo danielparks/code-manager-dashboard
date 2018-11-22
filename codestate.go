@@ -30,28 +30,26 @@ type CodeState struct {
 type JsonObject map[string]interface{}
 
 func (codeState *CodeState) UpdateFromRawCodeState(rawCodeState JsonObject) {
-	var rawDeploys []interface{}
 	environmentsSeen := map[string]bool{}
 
 	codeState.ClearUnfinishedDeploys()
 
-	fileSyncStatus := rawCodeState.GetObject("file-sync-storage-status")
 	deploysStatus := rawCodeState.GetObject("deploys-status")
+	mappings := map[string]DeployStatus{
+		"new": New,
+		"queued": Queued,
+		"deploying": Deploying,
+		"failed": Failed,
+	}
 
-	rawDeploys = deploysStatus.GetArray("new")
-	codeState.convertRawDeploys(rawDeploys, New, environmentsSeen)
+	for key, status := range mappings {
+		rawDeploys := deploysStatus.GetArray(key)
+		codeState.addRawDeploys(rawDeploys, status, environmentsSeen)
+	}
 
-	rawDeploys = deploysStatus.GetArray("queued")
-	codeState.convertRawDeploys(rawDeploys, Queued, environmentsSeen)
-
-	rawDeploys = deploysStatus.GetArray("deploying")
-	codeState.convertRawDeploys(rawDeploys, Deploying, environmentsSeen)
-
-	rawDeploys = fileSyncStatus.GetArray("deployed")
-	codeState.convertRawDeploys(rawDeploys, Deployed, environmentsSeen)
-
-	rawDeploys = deploysStatus.GetArray("failed")
-	codeState.convertRawDeploys(rawDeploys, Failed, environmentsSeen)
+	fileSyncStatus := rawCodeState.GetObject("file-sync-storage-status")
+	rawDeploys := fileSyncStatus.GetArray("deployed")
+	codeState.addRawDeploys(rawDeploys, Deployed, environmentsSeen)
 
 	for name, environmentState := range codeState.Environments {
 		if !environmentsSeen[name] && environmentState.Deploys[0].Status != Deleted {
@@ -148,7 +146,6 @@ func convertRawDeploy(rawDeploy JsonObject, status DeployStatus) Deploy {
 		deploy.Sha = rawDeploy["deploy-signature"].(string)
 	}
 
-
 	if rawDeploy["error"] != nil {
 		deploy.Error = rawDeploy.GetObject("error")
 
@@ -162,7 +159,7 @@ func convertRawDeploy(rawDeploy JsonObject, status DeployStatus) Deploy {
 	return deploy
 }
 
-func (codeState *CodeState) convertRawDeploys(rawDeploys []interface{}, status DeployStatus, environmentsSeen map[string]bool) {
+func (codeState *CodeState) addRawDeploys(rawDeploys []interface{}, status DeployStatus, environmentsSeen map[string]bool) {
 	for _, _rawDeploy := range rawDeploys {
 		rawDeploy := JsonObject(_rawDeploy.(map[string]interface{}))
 		deploy := convertRawDeploy(rawDeploy, status)
