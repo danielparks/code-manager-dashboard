@@ -27,8 +27,6 @@ type CodeState struct {
 	Environments map[string]EnvironmentState
 }
 
-type JsonObject map[string]interface{}
-
 func (codeState *CodeState) UpdateFromRawCodeState(rawCodeState JsonObject) {
 	environmentsSeen := map[string]bool{}
 
@@ -187,14 +185,6 @@ func (codeState *CodeState) AddDeploy(deploy Deploy) {
 	environmentState.AddDeploy(deploy)
 
 	codeState.Environments[deploy.Environment] = environmentState
-}
-
-func (parent JsonObject) GetArray(key string) []interface{} {
-	return parent[key].([]interface{})
-}
-
-func (parent JsonObject) GetObject(key string) JsonObject {
-	return JsonObject(parent[key].(map[string]interface{}))
 }
 
 func (deploy Deploy) Time() time.Time {
