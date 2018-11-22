@@ -18,7 +18,7 @@ func (environmentState *EnvironmentState) ClearUnfinishedDeploys() {
 	cleanedDeploys := []Deploy{}
 	for _, deploy := range environmentState.Deploys {
 		if deploy.Status >= Deployed {
-			// Either Deployed or Failed.
+			// Deployed, Failed, or Deleted.
 			cleanedDeploys = append(cleanedDeploys, deploy)
 		}
 	}
