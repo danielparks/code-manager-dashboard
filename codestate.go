@@ -10,6 +10,22 @@ type CodeState struct {
 	Environments map[string]EnvironmentState
 }
 
+func (codeState *CodeState) AddDeploy(deploy Deploy) {
+	if codeState.Environments == nil {
+		codeState.Environments = map[string]EnvironmentState{}
+	}
+
+	environmentState := codeState.Environments[deploy.Environment]
+	if environmentState.Environment == "" {
+		// We haven't seen this environment before; initialize it.
+		environmentState.Environment = deploy.Environment
+	}
+
+	environmentState.AddDeploy(deploy)
+
+	codeState.Environments[deploy.Environment] = environmentState
+}
+
 func (codeState *CodeState) UpdateFromRawCodeState(rawCodeState JsonObject) {
 	environmentsSeen := map[string]bool{}
 
@@ -57,6 +73,16 @@ func (codeState *CodeState) ClearUnfinishedDeploys() {
 	}
 }
 
+func (codeState *CodeState) addRawDeploys(rawDeploys []interface{}, status DeployStatus, environmentsSeen map[string]bool) {
+	for _, _rawDeploy := range rawDeploys {
+		rawDeploy := JsonObject(_rawDeploy.(map[string]interface{}))
+		deploy := convertRawDeploy(rawDeploy, status)
+
+		codeState.AddDeploy(deploy)
+		environmentsSeen[deploy.Environment] = true
+	}
+}
+
 func convertRawDate(rawDate interface{}) time.Time {
 	if rawDate == nil {
 		return time.Time{}
@@ -93,30 +119,4 @@ func convertRawDeploy(rawDeploy JsonObject, status DeployStatus) Deploy {
 	}
 
 	return deploy
-}
-
-func (codeState *CodeState) addRawDeploys(rawDeploys []interface{}, status DeployStatus, environmentsSeen map[string]bool) {
-	for _, _rawDeploy := range rawDeploys {
-		rawDeploy := JsonObject(_rawDeploy.(map[string]interface{}))
-		deploy := convertRawDeploy(rawDeploy, status)
-
-		codeState.AddDeploy(deploy)
-		environmentsSeen[deploy.Environment] = true
-	}
-}
-
-func (codeState *CodeState) AddDeploy(deploy Deploy) {
-	if codeState.Environments == nil {
-		codeState.Environments = map[string]EnvironmentState{}
-	}
-
-	environmentState := codeState.Environments[deploy.Environment]
-	if environmentState.Environment == "" {
-		// We haven't seen this environment before; initialize it.
-		environmentState.Environment = deploy.Environment
-	}
-
-	environmentState.AddDeploy(deploy)
-
-	codeState.Environments[deploy.Environment] = environmentState
 }
