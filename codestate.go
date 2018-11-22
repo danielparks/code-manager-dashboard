@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"strings"
 	"time"
 )
 
@@ -110,13 +109,9 @@ func convertRawDeploy(rawDeploy JsonObject, status DeployStatus) Deploy {
 
 	if rawDeploy["error"] != nil {
 		deploy.Error = rawDeploy.GetObject("error")
-
-		if deploy.Status == Failed && deploy.Error != nil && deploy.Error["msg"] != nil && strings.Contains(deploy.Error["msg"].(string), "cannot be found in any source and will not be deployed.") {
-			// Check for Environment(s) 'combined_minor_changes' cannot be found in any source and will not be deployed.
-			// if it's in the error.msg, then convert this to Delete
-			deploy.Status = Deleted
-		}
 	}
+
+	deploy.CorrectFailedStatus()
 
 	return deploy
 }
