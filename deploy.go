@@ -15,18 +15,6 @@ type Deploy struct {
 	Error         JsonObject
 }
 
-func (deploy Deploy) Time() time.Time {
-	time0 := time.Time{}
-
-	if deploy.FinishedAt.After(time0) {
-		return deploy.FinishedAt
-	} else if deploy.QueuedAt.After(time0) {
-		return deploy.QueuedAt
-	} else {
-		return deploy.EstimatedTime
-	}
-}
-
 func (deploy Deploy) CorrectFailedStatus() bool {
 	// If the status is Failed and the error message contains the below, then it
 	// actually the represents environment being deleted.
@@ -42,4 +30,34 @@ func (deploy Deploy) CorrectFailedStatus() bool {
 	}
 
 	return deploy.Status == Deleted
+}
+
+func (deploy Deploy) DisplayTime() time.Time {
+	// We really care about when it was finished.
+	if deploy.HasFinishedTime() {
+		return deploy.FinishedAt
+	} else if deploy.HasQueuedTime() {
+		return deploy.QueuedAt
+	} else {
+		return deploy.EstimatedTime
+	}
+}
+
+func (deploy Deploy) MatchTime() time.Time {
+	// Match on queued time, if possible
+	if deploy.HasQueuedTime() {
+		return deploy.QueuedAt
+	} else if deploy.HasFinishedTime() {
+		return deploy.FinishedAt
+	} else {
+		return deploy.EstimatedTime
+	}
+}
+
+func (deploy Deploy) HasQueuedTime() bool {
+	return deploy.QueuedAt.After(time.Time{})
+}
+
+func (deploy Deploy) HasFinishedTime() bool {
+	return deploy.FinishedAt.After(time.Time{})
 }
