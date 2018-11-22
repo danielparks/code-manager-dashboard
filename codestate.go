@@ -49,7 +49,7 @@ func (codeState *CodeState) UpdateFromRawCodeState(rawCodeState JsonObject) {
 
 	for name, environmentState := range codeState.Environments {
 		if !environmentsSeen[name] && environmentState.Deploys[0].Status != Deleted {
-			// This environment is wasn't in the current update, and its last recorded
+			// This environment wasn't in the current update, and its last recorded
 			// status isn't Deleted. So, it needs a Deleted record.
 			environmentState.AddDeploy(
 				Deploy{
