@@ -17,8 +17,7 @@ func (environmentState *EnvironmentState) AddDeploy(deploy Deploy) {
 func (environmentState *EnvironmentState) ClearUnfinishedDeploys() {
 	cleanedDeploys := []Deploy{}
 	for _, deploy := range environmentState.Deploys {
-		if deploy.Status >= Deployed {
-			// Deployed, Failed, or Deleted.
+		if deploy.Status.Finished() {
 			cleanedDeploys = append(cleanedDeploys, deploy)
 		}
 	}
@@ -47,11 +46,11 @@ func (environmentState *EnvironmentState) SortDeploys() {
 		a := environmentState.Deploys[i]
 		b := environmentState.Deploys[j]
 
-		if a.Status >= Deployed && b.Status >= Deployed {
-			// Either Deployed or Failed. These should be sorted together by date.
+		// Group statuses into their own buckets, then sort within them.
+		if a.Status == b.Status {
 			return a.Time().After(b.Time())
-		} else if a.Status == b.Status {
-			// Same status, so sort on date.
+		} else if a.Status.Finished() && b.Status.Finished() {
+			// Group all finished statuses into the same bucket.
 			return a.Time().After(b.Time())
 		} else {
 			return b.Status > a.Status

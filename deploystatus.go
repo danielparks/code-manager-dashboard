@@ -41,6 +41,10 @@ func (status DeployStatus) String() string {
 	return DeployStatusNames[status]
 }
 
+func (status DeployStatus) Finished() bool {
+	return status >= Deployed
+}
+
 func (status *DeployStatus) UnmarshalJSON(raw []byte) error {
 	var rawString string
 	err := json.Unmarshal(raw, &rawString)
