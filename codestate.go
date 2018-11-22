@@ -9,11 +9,13 @@ import (
 )
 
 type Deploy struct {
-	Environment string
-	Status      DeployStatus
-	Sha         string
-	Date        time.Time
-	Error       JsonObject
+	Environment   string
+	Status        DeployStatus
+	Sha           string
+	FinishedAt    time.Time
+	QueuedAt      time.Time
+	EstimatedTime time.Time
+	Error         JsonObject
 }
 
 type EnvironmentState struct {
@@ -37,25 +39,30 @@ func (codeState *CodeState) UpdateFromRawCodeState(rawCodeState JsonObject) {
 	deploysStatus := rawCodeState.GetObject("deploys-status")
 
 	rawDeploys = deploysStatus.GetArray("new")
-	codeState.convertRawDeploys(rawDeploys, New, "queued-at", environmentsSeen)
+	codeState.convertRawDeploys(rawDeploys, New, environmentsSeen)
 
 	rawDeploys = deploysStatus.GetArray("queued")
-	codeState.convertRawDeploys(rawDeploys, Queued, "queued-at", environmentsSeen)
+	codeState.convertRawDeploys(rawDeploys, Queued, environmentsSeen)
 
 	rawDeploys = deploysStatus.GetArray("deploying")
-	codeState.convertRawDeploys(rawDeploys, Deploying, "queued-at", environmentsSeen)
+	codeState.convertRawDeploys(rawDeploys, Deploying, environmentsSeen)
 
 	rawDeploys = fileSyncStatus.GetArray("deployed")
-	codeState.convertRawDeploys(rawDeploys, Deployed, "date", environmentsSeen)
+	codeState.convertRawDeploys(rawDeploys, Deployed, environmentsSeen)
 
 	rawDeploys = deploysStatus.GetArray("failed")
-	codeState.convertRawDeploys(rawDeploys, Failed, "queued-at", environmentsSeen)
+	codeState.convertRawDeploys(rawDeploys, Failed, environmentsSeen)
 
 	for name, environmentState := range codeState.Environments {
 		if !environmentsSeen[name] && environmentState.Deploys[0].Status != Deleted {
 			// This environment is wasn't in the current update, and its last recorded
 			// status isn't Deleted. So, it needs a Deleted record.
-			environmentState.AddDeploy(Deploy{name, Deleted, "", time.Now(), nil})
+			environmentState.AddDeploy(
+				Deploy{
+					Environment:   name,
+					Status:        Deleted,
+					EstimatedTime: time.Now(),
+				})
 		}
 
 		environmentState.RemoveDuplicateDeploys()
@@ -87,7 +94,7 @@ func (environmentState *EnvironmentState) RemoveDuplicateDeploys() {
 
 	seen := map[string]bool{}
 	for _, deploy := range environmentState.Deploys {
-		key := fmt.Sprintf("%s %s %s", deploy.Status, deploy.Sha, deploy.Date)
+		key := fmt.Sprintf("%s %s %s", deploy.Status, deploy.Sha, deploy.Time())
 		if seen[key] {
 			continue
 		}
@@ -106,52 +113,59 @@ func (environmentState *EnvironmentState) SortDeploys() {
 
 		if a.Status >= Deployed && b.Status >= Deployed {
 			// Either Deployed or Failed. These should be sorted together by date.
-			return a.Date.After(b.Date)
+			return a.Time().After(b.Time())
 		} else if a.Status == b.Status {
 			// Same status, so sort on date.
-			return a.Date.After(b.Date)
+			return a.Time().After(b.Time())
 		} else {
 			return b.Status > a.Status
 		}
 	})
 }
 
-func convertRawDeploy(rawDeploy JsonObject, status DeployStatus, dateKey string) Deploy {
-	var sha string
-	var date time.Time
-	var err error
-
-	environment := rawDeploy["environment"].(string)
-	if rawDeploy["deploy-signature"] != nil {
-		sha = rawDeploy["deploy-signature"].(string)
+func convertRawDate(rawDate interface{}) time.Time {
+	if rawDate == nil {
+		return time.Time{}
 	}
 
-	if rawDeploy[dateKey] != nil {
-		date, err = time.Parse(RFC3339Micro, rawDeploy[dateKey].(string))
-		if err != nil {
-			log.Fatal(err)
-		}
+	date, err := time.Parse(RFC3339Micro, rawDate.(string))
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	var deployError JsonObject
-
-	if rawDeploy["error"] != nil {
-		deployError = rawDeploy.GetObject("error")
-
-		if status == Failed && deployError != nil && deployError["msg"] != nil && strings.Contains(deployError["msg"].(string), "cannot be found in any source and will not be deployed.") {
-			// Check for Environment(s) 'combined_minor_changes' cannot be found in any source and will not be deployed.
-			// if it's in the error.msg, then convert this to Delete
-			status = Deleted
-		}
-	}
-
-	return Deploy{environment, status, sha, date, deployError}
+	return date
 }
 
-func (codeState *CodeState) convertRawDeploys(rawDeploys []interface{}, status DeployStatus, dateKey string, environmentsSeen map[string]bool) {
+func convertRawDeploy(rawDeploy JsonObject, status DeployStatus) Deploy {
+	var deploy Deploy
+
+	deploy.Environment = rawDeploy["environment"].(string)
+	deploy.Status = status
+	deploy.QueuedAt = convertRawDate(rawDeploy["queued-at"])
+	deploy.FinishedAt = convertRawDate(rawDeploy["date"])
+
+	if rawDeploy["deploy-signature"] != nil {
+		deploy.Sha = rawDeploy["deploy-signature"].(string)
+	}
+
+
+	if rawDeploy["error"] != nil {
+		deploy.Error = rawDeploy.GetObject("error")
+
+		if deploy.Status == Failed && deploy.Error != nil && deploy.Error["msg"] != nil && strings.Contains(deploy.Error["msg"].(string), "cannot be found in any source and will not be deployed.") {
+			// Check for Environment(s) 'combined_minor_changes' cannot be found in any source and will not be deployed.
+			// if it's in the error.msg, then convert this to Delete
+			deploy.Status = Deleted
+		}
+	}
+
+	return deploy
+}
+
+func (codeState *CodeState) convertRawDeploys(rawDeploys []interface{}, status DeployStatus, environmentsSeen map[string]bool) {
 	for _, _rawDeploy := range rawDeploys {
 		rawDeploy := JsonObject(_rawDeploy.(map[string]interface{}))
-		deploy := convertRawDeploy(rawDeploy, status, dateKey)
+		deploy := convertRawDeploy(rawDeploy, status)
 
 		codeState.AddDeploy(deploy)
 		environmentsSeen[deploy.Environment] = true
@@ -184,4 +198,16 @@ func (parent JsonObject) GetArray(key string) []interface{} {
 
 func (parent JsonObject) GetObject(key string) JsonObject {
 	return JsonObject(parent[key].(map[string]interface{}))
+}
+
+func (deploy Deploy) Time() time.Time {
+	time0 := time.Time{}
+
+	if deploy.FinishedAt.After(time0) {
+		return deploy.FinishedAt
+	} else if deploy.QueuedAt.After(time0) {
+		return deploy.QueuedAt
+	} else {
+		return deploy.EstimatedTime
+	}
 }

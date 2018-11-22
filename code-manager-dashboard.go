@@ -42,8 +42,8 @@ func displayEnvironments(codeState *CodeState) {
 		environment := environmentState.Environment
 
 		for _, deploy := range environmentState.Deploys {
-			localDate := deploy.Date.Truncate(time.Second).In(location)
-			elapsed := deploy.Date.Truncate(time.Second).Sub(now)
+			localDate := deploy.Time().Truncate(time.Second).In(location)
+			elapsed := deploy.Time().Truncate(time.Second).Sub(now)
 
 			fmt.Printf("%-45s  %-9s  %s  %v\n", environment, deploy.Status, localDate, elapsed)
 			environment = ""
