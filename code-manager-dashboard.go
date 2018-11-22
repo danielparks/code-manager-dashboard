@@ -14,170 +14,34 @@ import (
 
 const RFC3339Micro = "2006-01-02T15:04:05.999Z07:00"
 
-type Deploy struct {
-	Environment string
-	Status      DeployStatus
-	Sha         string
-	Date        time.Time
-	Error       map[string]interface{}
-}
-
-func convertRawDeploy(rawDeploy map[string]interface{}, status DeployStatus, dateKey string) Deploy {
-	var sha string
-	var date time.Time
-	var err error
-
-	environment := rawDeploy["environment"].(string)
-	if rawDeploy["deploy-signature"] != nil {
-		sha = rawDeploy["deploy-signature"].(string)
-	}
-
-	if rawDeploy[dateKey] != nil {
-		date, err = time.Parse(RFC3339Micro, rawDeploy[dateKey].(string))
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	var deployError map[string]interface{}
-
-	if rawDeploy["error"] != nil {
-		deployError = jsonGetObject(rawDeploy, "error")
-
-		if status == Failed && deployError != nil && deployError["msg"] != nil && strings.Contains(deployError["msg"].(string), "cannot be found in any source and will not be deployed.") {
-			// Check for Environment(s) 'combined_minor_changes' cannot be found in any source and will not be deployed.
-			// if it's in the error.msg, then convert this to Delete
-			status = Deleted
-		}
-	}
-
-	return Deploy{environment, status, sha, date, deployError}
-}
-
-func convertRawDeploys(deploys *map[string][]Deploy, rawDeploys []interface{}, status DeployStatus, dateKey string, environmentsSeen map[string]bool) {
-	for _, _rawDeploy := range rawDeploys {
-		rawDeploy := _rawDeploy.(map[string]interface{})
-		deploy := convertRawDeploy(rawDeploy, status, dateKey)
-		environmentDeploys := (*deploys)[deploy.Environment]
-		(*deploys)[deploy.Environment] = append(environmentDeploys, deploy)
-		environmentsSeen[deploy.Environment] = true
-	}
-}
-
-func jsonGetArray(parent map[string]interface{}, key string) []interface{} {
-	return parent[key].([]interface{})
-}
-
-func jsonGetObject(parent map[string]interface{}, key string) map[string]interface{} {
-	return parent[key].(map[string]interface{})
-}
-
-func updateEnvironmentMap(environmentMap *map[string][]Deploy, rawCodeState map[string]interface{}) {
-	// Clear all deployments except for the finished ones — others will be
-	// replaced from the current data.
-	for environment, deploys := range *environmentMap {
-		cleanedDeploys := []Deploy{}
-		for _, deploy := range deploys {
-			if deploy.Status >= Deployed {
-				// Either Deployed or Failed.
-				cleanedDeploys = append(cleanedDeploys, deploy)
-			}
-		}
-		(*environmentMap)[environment] = cleanedDeploys
-	}
-
-	var rawDeploys []interface{}
-	environmentsSeen := map[string]bool{}
-
-	fileSyncStatus := jsonGetObject(rawCodeState, "file-sync-storage-status")
-	deploysStatus := jsonGetObject(rawCodeState, "deploys-status")
-
-	rawDeploys = jsonGetArray(deploysStatus, "new")
-	convertRawDeploys(environmentMap, rawDeploys, New, "queued-at", environmentsSeen)
-
-	rawDeploys = jsonGetArray(deploysStatus, "queued")
-	convertRawDeploys(environmentMap, rawDeploys, Queued, "queued-at", environmentsSeen)
-
-	rawDeploys = jsonGetArray(deploysStatus, "deploying")
-	convertRawDeploys(environmentMap, rawDeploys, Deploying, "queued-at", environmentsSeen)
-
-	rawDeploys = jsonGetArray(fileSyncStatus, "deployed")
-	convertRawDeploys(environmentMap, rawDeploys, Deployed, "date", environmentsSeen)
-
-	rawDeploys = jsonGetArray(deploysStatus, "failed")
-	convertRawDeploys(environmentMap, rawDeploys, Failed, "queued-at", environmentsSeen)
-
-	for environment, deploys := range *environmentMap {
-		if !environmentsSeen[environment] && deploys[0].Status != Deleted {
-			// This environment is wasn't in the current update, and its last recorded
-			// status isn't Deleted.
-			deploys = append(deploys, Deploy{environment, Deleted, "", time.Now(), nil})
-		}
-
-		uniqueDeploys := []Deploy{}
-
-		// Remove duplicates
-		seen := map[string]bool{}
-		for _, deploy := range deploys {
-			if deploy.Status >= Deployed {
-				key := fmt.Sprintf("%s %s %s", deploy.Status, deploy.Sha, deploy.Date)
-				if seen[key] {
-					continue
-				}
-
-				seen[key] = true
-			}
-
-			uniqueDeploys = append(uniqueDeploys, deploy)
-		}
-
-		// Sort
-		sort.Slice(uniqueDeploys, func(i, j int) bool {
-			a := uniqueDeploys[i]
-			b := uniqueDeploys[j]
-			if a.Status >= Deployed && b.Status >= Deployed {
-				// Either Deployed or Failed. These should be sorted together by date.
-				return a.Date.After(b.Date)
-			} else if a.Status == b.Status {
-				// Same status, so sort on date.
-				return a.Date.After(b.Date)
-			} else {
-				return b.Status > a.Status
-			}
-		})
-
-		(*environmentMap)[environment] = uniqueDeploys
-	}
-}
-
-func sortedEnvironments(environmentMap map[string][]Deploy) [][]Deploy {
-	environments := make([][]Deploy, len(environmentMap))
+func sortedEnvironments(codeState *CodeState) []EnvironmentState {
+	environments := make([]EnvironmentState, len(codeState.Environments))
 	i := 0
-	for _, value := range environmentMap {
-		environments[i] = value
+	for _, environmentState := range codeState.Environments {
+		environments[i] = environmentState
 		i++
 	}
 
 	sort.Slice(environments, func(i, j int) bool {
-		a := environments[i]
-		b := environments[j]
-		return strings.ToLower(a[0].Environment) < strings.ToLower(b[0].Environment)
+		a := environments[i].Deploys[0]
+		b := environments[j].Deploys[0]
+		return strings.ToLower(a.Environment) < strings.ToLower(b.Environment)
 	})
 
 	return environments
 }
 
-func displayEnvironments(environmentMap map[string][]Deploy) {
-	environments := sortedEnvironments(environmentMap)
+func displayEnvironments(codeState *CodeState) {
+	environments := sortedEnvironments(codeState)
 
 	now := time.Now().Truncate(time.Second)
 	localZone, localZoneOffset := now.Zone()
 	location := time.FixedZone(localZone, localZoneOffset)
 
-	for _, deploys := range environments {
-		environment := deploys[0].Environment
+	for _, environmentState := range environments {
+		environment := environmentState.Environment
 
-		for _, deploy := range deploys {
+		for _, deploy := range environmentState.Deploys {
 			localDate := deploy.Date.Truncate(time.Second).In(location)
 			elapsed := deploy.Date.Truncate(time.Second).Sub(now)
 
@@ -203,8 +67,8 @@ func loadRawCodeState(source string) map[string]interface{} {
 	return rawCodeState
 }
 
-func readState(path string) (map[string][]Deploy, error) {
-	state := map[string][]Deploy{}
+func readState(path string) (CodeState, error) {
+	state := CodeState{}
 
 	stateJson, err := ioutil.ReadFile(path)
 	if os.IsNotExist(err) {
@@ -212,15 +76,15 @@ func readState(path string) (map[string][]Deploy, error) {
 	}
 
 	if err != nil {
-		return nil, err
+		return state, err
 	}
 
 	err = json.Unmarshal(stateJson, &state)
 	return state, err
 }
 
-func dumpState(environmentMap map[string][]Deploy, path string) error {
-	stateJson, err := json.MarshalIndent(environmentMap, "", "  ")
+func dumpState(codeState *CodeState, path string) error {
+	stateJson, err := json.MarshalIndent(*codeState, "", "  ")
 	if err != nil {
 		return err
 	}
@@ -244,11 +108,11 @@ func main() {
 	server := "pe-mom1-prod.ops.puppetlabs.net"
 	caPath := "/Users/daniel/work/puppetca.ops.puppetlabs.net.pem"
 
-	var environmentMap map[string][]Deploy
+	var codeState CodeState
 	var err error
 
 	if stateFile != "" {
-		environmentMap, err = readState(stateFile)
+		codeState, err = readState(stateFile)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -256,18 +120,18 @@ func main() {
 
 	if fakeStatus {
 		for _, source := range args {
-			updateEnvironmentMap(&environmentMap, loadRawCodeState(source))
+			codeState.UpdateFromRawCodeState(loadRawCodeState(source))
 		}
 	} else {
 		apiClient := TypicalApiClient(server, os.Getenv("pe_token"), caPath)
 		rawCodeState := apiClient.GetRawCodeState()
-		updateEnvironmentMap(&environmentMap, rawCodeState)
+		codeState.UpdateFromRawCodeState(rawCodeState)
 	}
 
-	displayEnvironments(environmentMap)
+	displayEnvironments(&codeState)
 
 	if stateFile != "" {
-		err = dumpState(environmentMap, stateFile)
+		err = dumpState(&codeState, stateFile)
 		if err != nil {
 			log.Fatal(err)
 		}

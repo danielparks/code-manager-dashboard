@@ -20,9 +20,9 @@ type ApiClient struct {
 
 func TypicalApiClient(host string, rbacToken string, caPath string) *ApiClient {
 	return &ApiClient{
-		Host: host,
-		Port: 8170,
-		RbacToken: rbacToken,
+		Host:       host,
+		Port:       8170,
+		RbacToken:  rbacToken,
 		HttpClient: ApiHttpClient(LoadCaCert(caPath)),
 	}
 }
