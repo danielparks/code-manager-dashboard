@@ -32,10 +32,10 @@ func (codeState *CodeState) UpdateFromRawCodeState(rawCodeState JsonObject) {
 
 	deploysStatus := rawCodeState.GetObject("deploys-status")
 	mappings := map[string]DeployStatus{
-		"new": New,
-		"queued": Queued,
+		"new":       New,
+		"queued":    Queued,
 		"deploying": Deploying,
-		"failed": Failed,
+		"failed":    Failed,
 	}
 
 	for key, status := range mappings {
