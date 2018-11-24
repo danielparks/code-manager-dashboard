@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/pborman/getopt/v2"
 	"io/ioutil"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"os"
 	"sort"
 	"strings"
@@ -68,6 +68,7 @@ func loadRawCodeState(source string) map[string]interface{} {
 }
 
 func readState(path string) (CodeState, error) {
+	log.Debugf("readState(%q)", path)
 	state := CodeState{}
 
 	stateJson, err := ioutil.ReadFile(path)
@@ -84,6 +85,7 @@ func readState(path string) (CodeState, error) {
 }
 
 func dumpState(codeState *CodeState, path string) error {
+	log.Debugf("dumpState(<>, %q)", path)
 	stateJson, err := json.MarshalIndent(*codeState, "", "  ")
 	if err != nil {
 		return err
@@ -95,15 +97,26 @@ func dumpState(codeState *CodeState, path string) error {
 
 func main() {
 	var fakeStatus bool
+	var stateFile string
+	var debug bool
+	var verbose bool
+
 	getopt.FlagLong(&fakeStatus, "fake-status", 0,
 		"Treat arguments as list of files to load deploy statuses from.")
-
-	var stateFile string
-	getopt.FlagLong(&stateFile, "state-file", 's',
-		"File to store state in.")
+	getopt.FlagLong(&stateFile, "state-file", 's', "File to store state in.")
+	getopt.FlagLong(&debug, "debug", 'd', "Output debugging information.")
+	getopt.FlagLong(&verbose, "verbose", 'v', "Output more information.")
 
 	getopt.Parse()
 	args := getopt.Args()
+
+	if debug {
+		log.SetLevel(log.DebugLevel)
+	} else if verbose {
+		log.SetLevel(log.InfoLevel)
+	} else {
+		log.SetLevel(log.WarnLevel)
+	}
 
 	server := "pe-mom1-prod.ops.puppetlabs.net"
 	caPath := "/Users/daniel/work/puppetca.ops.puppetlabs.net.pem"
