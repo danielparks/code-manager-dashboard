@@ -2,13 +2,13 @@
 
 set -e
 
-rm -fr var/testCorpus
-mkdir -p var/testCorpus
+workdir="$(mktemp -d)"
 
 lastOut=""
-for input in corpus/*.json ; do
-  out="var/testCorpus/$(basename $input .json).out"
-  go run *.go -s var/testCorpus/state.json --fake-status "$input" >"$out"
+for input in "$@" ; do
+  out="${workdir}/$(basename $input .json).out"
+  go run *.go -s "${workdir}/state.json" --fake-status "$input" >"$out"
+
   if [ -n "$lastOut" ] ; then
     diff -us "$lastOut" "$out" || true
     echo
@@ -16,7 +16,3 @@ for input in corpus/*.json ; do
 
   lastOut="$out"
 done
-
-if [ -n "$lastOut" ] ; then
-  diff -us "$lastOut" "$out" || true
-fi
