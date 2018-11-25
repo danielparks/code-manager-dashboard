@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	log "github.com/sirupsen/logrus"
 	"sort"
 )
 
@@ -10,41 +10,82 @@ type EnvironmentState struct {
 	Deploys     []Deploy
 }
 
-func (environmentState *EnvironmentState) AddDeploy(deploy Deploy) {
-	environmentState.Deploys = append(environmentState.Deploys, deploy)
-}
+type SortOrder int
 
-func (environmentState *EnvironmentState) ClearUnfinishedDeploys() {
-	cleanedDeploys := []Deploy{}
-	for _, deploy := range environmentState.Deploys {
-		if deploy.Status.Finished() {
-			cleanedDeploys = append(cleanedDeploys, deploy)
+const (
+	Ascending  = iota
+	Descending = iota
+)
+
+func (environmentState *EnvironmentState) AddDeploys(newDeploys []Deploy) {
+	log.Debugf("%s AddDeploys([%d]Deploy)",
+		environmentState.Environment,
+		len(newDeploys))
+
+	deploysToAdd := []Deploy{}
+
+	environmentState.SortDeploys(Descending)
+	oldDeploysMatched := make(map[int]bool, len(environmentState.Deploys))
+
+	_sortDeploys(newDeploys, Descending)
+	for _, newDeploy := range newDeploys {
+		possibleMatch := -1
+		found := false
+		for i, oldDeploy := range environmentState.Deploys {
+			if oldDeploysMatched[i] {
+				// An old deploy can only be updated be one new record.
+				continue
+			}
+
+			match := oldDeploy.Match(newDeploy)
+			if match == Yes {
+				oldDeploy.Update(newDeploy)
+				oldDeploysMatched[i] = true
+				found = true
+				break
+			} else if match == Maybe && possibleMatch < 0 {
+				log.Tracef("First possible match found")
+				possibleMatch = i
+			}
 		}
-	}
-	environmentState.Deploys = cleanedDeploys
-}
 
-func (environmentState *EnvironmentState) RemoveDuplicateDeploys() {
-	uniqueDeploys := []Deploy{}
-
-	seen := map[string]bool{}
-	for _, deploy := range environmentState.Deploys {
-		key := fmt.Sprintf("%s %s %s", deploy.Status, deploy.Sha, deploy.MatchTime())
-		if seen[key] {
+		if found {
 			continue
 		}
 
-		seen[key] = true
-		uniqueDeploys = append(uniqueDeploys, deploy)
+		if possibleMatch >= 0 {
+			log.Tracef("Using possible match")
+			environmentState.Deploys[possibleMatch].Update(newDeploy)
+			oldDeploysMatched[possibleMatch] = true
+			continue
+		}
+
+		// It's new
+		deploysToAdd = append(deploysToAdd, newDeploy)
 	}
 
-	environmentState.Deploys = uniqueDeploys
+	for i, oldDeploy := range environmentState.Deploys {
+		if !oldDeploysMatched[i] && !oldDeploy.Status.Finished() {
+			log.Tracef("Found ghost deploy")
+			environmentState.Deploys[i].Status = Ghost
+		}
+	}
+
+	environmentState.Deploys = append(environmentState.Deploys, deploysToAdd...)
 }
 
-func (environmentState *EnvironmentState) SortDeploys() {
-	sort.Slice(environmentState.Deploys, func(i, j int) bool {
-		a := environmentState.Deploys[i].MatchTime()
-		b := environmentState.Deploys[j].MatchTime()
-		return a.After(b)
+func _sortDeploys(deploys []Deploy, order SortOrder) {
+	sort.Slice(deploys, func(i, j int) bool {
+		a := deploys[i].MatchTime()
+		b := deploys[j].MatchTime()
+		if order == Descending {
+			return a.After(b)
+		} else {
+			return a.Before(b)
+		}
 	})
+}
+
+func (environmentState *EnvironmentState) SortDeploys(order SortOrder) {
+	_sortDeploys(environmentState.Deploys, order)
 }

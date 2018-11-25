@@ -15,6 +15,7 @@ const (
 	Deployed  DeployStatus = iota
 	Failed    DeployStatus = iota
 	Deleted   DeployStatus = iota
+	Ghost     DeployStatus = iota // Was unfinished, but now it's gone.
 )
 
 var DeployStatusNames = [...]string{
@@ -24,6 +25,7 @@ var DeployStatusNames = [...]string{
 	"deployed",
 	"failed",
 	"deleted",
+	"ghost",
 }
 
 /// FIXME needs testing

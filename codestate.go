@@ -9,26 +9,10 @@ type CodeState struct {
 	Environments map[string]EnvironmentState
 }
 
-func (codeState *CodeState) AddDeploy(deploy Deploy) {
-	if codeState.Environments == nil {
-		codeState.Environments = map[string]EnvironmentState{}
-	}
-
-	environmentState := codeState.Environments[deploy.Environment]
-	if environmentState.Environment == "" {
-		// We haven't seen this environment before; initialize it.
-		environmentState.Environment = deploy.Environment
-	}
-
-	environmentState.AddDeploy(deploy)
-
-	codeState.Environments[deploy.Environment] = environmentState
-}
-
 func (codeState *CodeState) UpdateFromRawCodeState(rawCodeState JsonObject) {
-	environmentsSeen := map[string]bool{}
+	log.Debug("CodeState<>.UpdateFromRawCodeState(<>)")
 
-	codeState.ClearUnfinishedDeploys()
+	newDeploys := map[string][]Deploy{}
 
 	deploysStatus := rawCodeState.GetObject("deploys-status")
 	mappings := map[string]DeployStatus{
@@ -40,45 +24,62 @@ func (codeState *CodeState) UpdateFromRawCodeState(rawCodeState JsonObject) {
 
 	for key, status := range mappings {
 		rawDeploys := deploysStatus.GetArray(key)
-		codeState.addRawDeploys(rawDeploys, status, environmentsSeen)
+		convertRawDeploys(rawDeploys, status, &newDeploys)
 	}
 
 	fileSyncStatus := rawCodeState.GetObject("file-sync-storage-status")
 	rawDeploys := fileSyncStatus.GetArray("deployed")
-	codeState.addRawDeploys(rawDeploys, Deployed, environmentsSeen)
+	convertRawDeploys(rawDeploys, Deployed, &newDeploys)
 
+	environmentsSeen := map[string]bool{}
 	for name, environmentState := range codeState.Environments {
-		if !environmentsSeen[name] && environmentState.Deploys[0].Status != Deleted {
+		environmentsSeen[name] = true
+		if newDeploys[name] != nil {
+			environmentState.AddDeploys(newDeploys[name])
+		} else if environmentState.Deploys[0].Status != Deleted {
+			log.Debugf("Environment %q not in the latest status update", name)
 			// This environment wasn't in the current update, and its last recorded
 			// status isn't Deleted. So, it needs a Deleted record.
-			environmentState.AddDeploy(
+			environmentState.AddDeploys([]Deploy{
 				Deploy{
 					Environment:   name,
 					Status:        Deleted,
 					EstimatedTime: time.Now(),
-				})
+				},
+			})
 		}
 
-		environmentState.RemoveDuplicateDeploys()
-		environmentState.SortDeploys()
+		//		environmentState.RemoveDuplicateDeploys()
+		// RemoveDuplicateDeploys will sort
+		// environmentState.SortDeploys(Descending)
 
 		codeState.Environments[name] = environmentState
 	}
-}
 
-func (codeState *CodeState) ClearUnfinishedDeploys() {
-	for _, environmentState := range codeState.Environments {
-		environmentState.ClearUnfinishedDeploys()
+	if codeState.Environments == nil {
+		codeState.Environments = map[string]EnvironmentState{}
+	}
+
+	// Look for all the environments we haven't already seen.
+	for name, deploys := range newDeploys {
+		if environmentsSeen[name] {
+			continue
+		}
+
+		newEnvironmentState := EnvironmentState{Environment: name}
+		newEnvironmentState.AddDeploys(deploys)
+		codeState.Environments[name] = newEnvironmentState
 	}
 }
 
-func (codeState *CodeState) addRawDeploys(rawDeploys []interface{}, status DeployStatus, environmentsSeen map[string]bool) {
+func convertRawDeploys(rawDeploys []interface{}, status DeployStatus, environments *map[string][]Deploy) {
+	log.Debug("convertRawDeploys ", len(rawDeploys), " ", status, " deploys")
 	for _, _rawDeploy := range rawDeploys {
 		rawDeploy := JsonObject(_rawDeploy.(map[string]interface{}))
 		deploy := convertRawDeploy(rawDeploy, status)
 
-		codeState.AddDeploy(deploy)
-		environmentsSeen[deploy.Environment] = true
+		deploys := (*environments)[deploy.Environment]
+		(*environments)[deploy.Environment] = append(deploys, deploy)
 	}
 }
 

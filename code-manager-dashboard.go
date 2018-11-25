@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/pborman/getopt/v2"
-	"io/ioutil"
 	log "github.com/sirupsen/logrus"
+	"io/ioutil"
 	"os"
 	"sort"
 	"strings"
@@ -98,19 +98,21 @@ func dumpState(codeState *CodeState, path string) error {
 func main() {
 	var fakeStatus bool
 	var stateFile string
-	var debug bool
-	var verbose bool
+	var trace, debug, verbose bool
 
 	getopt.FlagLong(&fakeStatus, "fake-status", 0,
 		"Treat arguments as list of files to load deploy statuses from.")
 	getopt.FlagLong(&stateFile, "state-file", 's', "File to store state in.")
+	getopt.FlagLong(&trace, "trace", 0, "Output trace information.")
 	getopt.FlagLong(&debug, "debug", 'd', "Output debugging information.")
 	getopt.FlagLong(&verbose, "verbose", 'v', "Output more information.")
 
 	getopt.Parse()
 	args := getopt.Args()
 
-	if debug {
+	if trace {
+		log.SetLevel(log.TraceLevel)
+	} else if debug {
 		log.SetLevel(log.DebugLevel)
 	} else if verbose {
 		log.SetLevel(log.InfoLevel)
