@@ -1,12 +1,45 @@
-package main
+package codemanager
 
 import (
+	"encoding/json"
 	log "github.com/sirupsen/logrus"
+	"io/ioutil"
+	"os"
 	"time"
 )
 
 type CodeState struct {
 	Environments map[string]EnvironmentState
+}
+
+const RFC3339Micro = "2006-01-02T15:04:05.999Z07:00"
+
+func LoadCodeState(path string) (CodeState, error) {
+	log.Debugf("readState(%q)", path)
+	state := CodeState{}
+
+	stateJson, err := ioutil.ReadFile(path)
+	if os.IsNotExist(err) {
+		return state, nil
+	}
+
+	if err != nil {
+		return state, err
+	}
+
+	err = json.Unmarshal(stateJson, &state)
+	return state, err
+}
+
+func SaveCodeState(codeState *CodeState, path string) error {
+	log.Debugf("dumpState(<>, %q)", path)
+	stateJson, err := json.MarshalIndent(*codeState, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	/// FIXME should we lock this?
+	return ioutil.WriteFile(path, append(stateJson, '\n'), 0644)
 }
 
 func (codeState *CodeState) UpdateFromRawCodeState(rawCodeState JsonObject) {

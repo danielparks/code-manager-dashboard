@@ -1,4 +1,4 @@
-package main
+package codemanager
 
 type JsonObject map[string]interface{}
 
