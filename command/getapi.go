@@ -7,27 +7,27 @@ import (
 	"os"
 )
 
-var (
-	stateFile = getapiCommand.PersistentFlags().StringP("state-file", "f", "", "File to store state in.")
-	show = getapiCommand.PersistentFlags().BoolP("show", "S", false, "Show state.")
-)
-
 func init() {
+	getapiCommand.PersistentFlags().StringP("state-file", "f", "", "File to store state in.")
+	getapiCommand.PersistentFlags().BoolP("show", "S", false, "Show state.")
 	RootCommand.AddCommand(getapiCommand)
 }
 
 var getapiCommand = &cobra.Command{
 	Use:   "getapi",
-	Short: "Load current state from the Code Manager API.",
+	Short: "Load current state from the Code Manager API",
 	Run:   func(command *cobra.Command, args []string) {
+		stateFile := getFlagString(command, "state-file")
+		show := getFlagBool(command, "show")
+
 		server := "pe-mom1-prod.ops.puppetlabs.net"
 		caPath := "/Users/daniel/work/puppetca.ops.puppetlabs.net.pem"
 
 		var codeState codemanager.CodeState
 		var err error
 
-		if *stateFile != "" {
-			codeState, err = codemanager.LoadCodeState(*stateFile)
+		if stateFile != "" {
+			codeState, err = loadOptionalCodeState(stateFile)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -37,12 +37,12 @@ var getapiCommand = &cobra.Command{
 		rawCodeState := apiClient.GetRawCodeState()
 		codeState.UpdateFromRawCodeState(rawCodeState)
 
-		if *show {
+		if show {
 			ShowEnvironments(&codeState)
 		}
 
-		if *stateFile != "" {
-			err = codemanager.SaveCodeState(&codeState, *stateFile)
+		if stateFile != "" {
+			err = codemanager.SaveCodeState(&codeState, stateFile)
 			if err != nil {
 				log.Fatal(err)
 			}

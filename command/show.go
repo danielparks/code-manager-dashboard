@@ -10,18 +10,20 @@ import (
 	"time"
 )
 
-var stateFile = showCommand.PersistentFlags().StringP("state-file", "f", "", "File to store state in.")
-
 func init() {
-	showCommand.MarkFlagRequired("state-file")
+	showCommand.PersistentFlags().StringP("state-file", "f", "", "File to store state in.")
+	showCommand.MarkPersistentFlagRequired("state-file")
 	RootCommand.AddCommand(showCommand)
 }
 
 var showCommand = &cobra.Command{
 	Use:   "show",
-	Short: "Show deployment status recorded in the state file.",
+	Short: "Show deployment status recorded in the state file",
+	Args:  cobra.NoArgs,
 	Run:   func(command *cobra.Command, args []string) {
-		codeState, err := codemanager.LoadCodeState(*stateFile)
+		stateFile := getFlagString(command, "state-file")
+
+		codeState, err := codemanager.LoadCodeState(stateFile)
 		if err != nil {
 			log.Fatal(err)
 		}

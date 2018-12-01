@@ -8,27 +8,24 @@ import (
 	"io/ioutil"
 )
 
-var (
-	stateFile = getfileCommand.PersistentFlags().StringP("state-file", "f", "", "File to store state in.")
-	show = getfileCommand.PersistentFlags().BoolP("show", "S", false, "Show state.")
-)
-
 func init() {
+	getfileCommand.PersistentFlags().StringP("state-file", "f", "", "File to store state in.")
+	getfileCommand.PersistentFlags().BoolP("show", "S", false, "Show state.")
 	RootCommand.AddCommand(getfileCommand)
 }
 
 var getfileCommand = &cobra.Command{
 	Use:   "getfile",
-	Short: "Load current state from a file.",
+	Short: "Load current state from a file",
 	Run:   func(command *cobra.Command, args []string) {
-		stateFile := command.flags.GetString("state-file")
-		show := command.flags.GetBool("show")
+		stateFile := getFlagString(command, "state-file")
+		show := getFlagBool(command, "show")
 
 		var codeState codemanager.CodeState
 		var err error
 
-		if *stateFile != "" {
-			codeState, err = codemanager.LoadCodeState(*stateFile)
+		if stateFile != "" {
+			codeState, err = loadOptionalCodeState(stateFile)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -38,12 +35,12 @@ var getfileCommand = &cobra.Command{
 			codeState.UpdateFromRawCodeState(loadRawCodeState(source))
 		}
 
-		if *show {
+		if show {
 			ShowEnvironments(&codeState)
 		}
 
-		if *stateFile != "" {
-			err = codemanager.SaveCodeState(&codeState, *stateFile)
+		if stateFile != "" {
+			err = codemanager.SaveCodeState(&codeState, stateFile)
 			if err != nil {
 				log.Fatal(err)
 			}
