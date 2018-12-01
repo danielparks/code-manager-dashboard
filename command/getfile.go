@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/danielparks/code-manager-dashboard/codemanager"
 	log "github.com/sirupsen/logrus"
-  "github.com/spf13/cobra"
+	"github.com/spf13/cobra"
 	"io/ioutil"
 )
 
@@ -14,15 +14,15 @@ var (
 )
 
 func init() {
-  RootCommand.AddCommand(getfileCommand)
+	RootCommand.AddCommand(getfileCommand)
 }
 
 var getfileCommand = &cobra.Command{
-  Use:   "getfile",
-  Short: "Load current state from a file.",
-  Run:   func(command *cobra.Command, args []string) {
-  	stateFile := command.flags.GetString("state-file")
-  	show := command.flags.GetBool("show")
+	Use:   "getfile",
+	Short: "Load current state from a file.",
+	Run:   func(command *cobra.Command, args []string) {
+		stateFile := command.flags.GetString("state-file")
+		show := command.flags.GetBool("show")
 
 		var codeState codemanager.CodeState
 		var err error
@@ -48,7 +48,7 @@ var getfileCommand = &cobra.Command{
 				log.Fatal(err)
 			}
 		}
-  },
+	},
 }
 
 

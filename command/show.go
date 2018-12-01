@@ -3,7 +3,7 @@ package command
 import (
 	"github.com/danielparks/code-manager-dashboard/codemanager"
 	log "github.com/sirupsen/logrus"
-  "github.com/spf13/cobra"
+	"github.com/spf13/cobra"
 	"fmt"
 	"sort"
 	"strings"
@@ -14,20 +14,20 @@ var stateFile = showCommand.PersistentFlags().StringP("state-file", "f", "", "Fi
 
 func init() {
 	showCommand.MarkFlagRequired("state-file")
-  RootCommand.AddCommand(showCommand)
+	RootCommand.AddCommand(showCommand)
 }
 
 var showCommand = &cobra.Command{
-  Use:   "show",
-  Short: "Show deployment status recorded in the state file.",
-  Run:   func(command *cobra.Command, args []string) {
+	Use:   "show",
+	Short: "Show deployment status recorded in the state file.",
+	Run:   func(command *cobra.Command, args []string) {
 		codeState, err := codemanager.LoadCodeState(*stateFile)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		ShowEnvironments(&codeState)
-  },
+	},
 }
 
 func sortedEnvironments(codeState *codemanager.CodeState) []codemanager.EnvironmentState {

@@ -2,7 +2,7 @@ package command
 
 import (
 	log "github.com/sirupsen/logrus"
-  "github.com/spf13/cobra"
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -12,10 +12,10 @@ var (
 )
 
 var RootCommand = &cobra.Command{
-  Use:   "code-manager-dashboard",
-  Short: "Dashboard for Code Manager deploys",
-  Long:  "Dashboard showing the deployment status of all environments",
-  Run:   func(command *cobra.Command, args []string) {
+	Use:   "code-manager-dashboard",
+	Short: "Dashboard for Code Manager deploys",
+	Long:  "Dashboard showing the deployment status of all environments",
+	Run:   func(command *cobra.Command, args []string) {
 		if *trace {
 			log.SetLevel(log.TraceLevel)
 		} else if *debug {
@@ -25,5 +25,5 @@ var RootCommand = &cobra.Command{
 		} else {
 			log.SetLevel(log.WarnLevel)
 		}
-  },
+	},
 }

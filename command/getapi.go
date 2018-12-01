@@ -3,8 +3,8 @@ package command
 import (
 	"github.com/danielparks/code-manager-dashboard/codemanager"
 	log "github.com/sirupsen/logrus"
-  "github.com/spf13/cobra"
-  "os"
+	"github.com/spf13/cobra"
+	"os"
 )
 
 var (
@@ -13,13 +13,13 @@ var (
 )
 
 func init() {
-  RootCommand.AddCommand(getapiCommand)
+	RootCommand.AddCommand(getapiCommand)
 }
 
 var getapiCommand = &cobra.Command{
-  Use:   "getapi",
-  Short: "Load current state from the Code Manager API.",
-  Run:   func(command *cobra.Command, args []string) {
+	Use:   "getapi",
+	Short: "Load current state from the Code Manager API.",
+	Run:   func(command *cobra.Command, args []string) {
 		server := "pe-mom1-prod.ops.puppetlabs.net"
 		caPath := "/Users/daniel/work/puppetca.ops.puppetlabs.net.pem"
 
@@ -47,5 +47,5 @@ var getapiCommand = &cobra.Command{
 				log.Fatal(err)
 			}
 		}
-  },
+	},
 }
