@@ -20,7 +20,7 @@ var getapiCommand = &cobra.Command{
 		stateFile := getFlagString(command, "state-file")
 		show := getFlagBool(command, "show")
 
-		server := "pe-mom1-prod.ops.puppetlabs.net"
+		server := "puppet.ops.puppetlabs.net"
 		caPath := "/Users/daniel/work/puppetca.ops.puppetlabs.net.pem"
 
 		var codeState codemanager.CodeState
