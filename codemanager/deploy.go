@@ -112,7 +112,8 @@ func (a Deploy) Match(b Deploy) Trinary {
 	} else {
 		// We should never get an update to a deployment with only an estimated time,
 		// since that's only used when an environment disappears.
-		panic(fmt.Sprintf("Matching A has no finished or queued at time"))
+		log.Infof("Matching A has no finished or queued at time")
+		return No
 	}
 
 	if a.Status == b.Status {
