@@ -45,7 +45,7 @@ func LoadCaCert(path string) *tls.Config {
 func ApiHttpClient(tlsConfig *tls.Config) *http.Client {
 	return &http.Client{
 		Transport: &http.Transport{TLSClientConfig: tlsConfig},
-		Timeout:   60 * time.Second,
+		Timeout:   5 * time.Minute,
 	}
 }
 
