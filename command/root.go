@@ -24,6 +24,14 @@ func getFlagBool(command *cobra.Command, name string) bool {
 	return value
 }
 
+func getFlagInt(command *cobra.Command, name string) int {
+	value, err := command.Flags().GetInt(name)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return value
+}
+
 func getFlagString(command *cobra.Command, name string) string {
 	value, err := command.Flags().GetString(name)
 	if err != nil {
