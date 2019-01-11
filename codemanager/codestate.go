@@ -61,6 +61,8 @@ func (codeState *CodeState) UpdateFromRawCodeState(rawCodeState JsonObject) {
 
 	environmentsSeen := map[string]bool{}
 	for name, environmentState := range codeState.Environments {
+		environmentState.SortDeploys(Descending)
+
 		environmentsSeen[name] = true
 		if newDeploys[name] != nil {
 			environmentState.AddDeploys(newDeploys[name])
@@ -76,10 +78,6 @@ func (codeState *CodeState) UpdateFromRawCodeState(rawCodeState JsonObject) {
 				},
 			})
 		}
-
-		//		environmentState.RemoveDuplicateDeploys()
-		// RemoveDuplicateDeploys will sort
-		// environmentState.SortDeploys(Descending)
 
 		codeState.Environments[name] = environmentState
 	}
