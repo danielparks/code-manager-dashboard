@@ -19,7 +19,7 @@ func init() {
 var showCommand = &cobra.Command{
 	Use:   "show",
 	Short: "Show deployment status recorded in the state file",
-	Args:  cobra.NoArgs,
+	Args:  cobra.ArbitraryArgs,
 	Run:   func(command *cobra.Command, args []string) {
 		stateFile := getFlagString(command, "state-file")
 
@@ -28,7 +28,14 @@ var showCommand = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		ShowEnvironments(&codeState)
+		if len(args) == 0 {
+			ShowEnvironments(&codeState)
+		} else {
+			for _, name := range args {
+				environmentState := codeState.Environments[name]
+				ShowEnvironmentState(&environmentState)
+			}
+		}
 	},
 }
 
@@ -49,12 +56,16 @@ func sortedEnvironments(codeState *codemanager.CodeState) []codemanager.Environm
 	return environments
 }
 
-func ShowEnvironments(codeState *codemanager.CodeState) {
-	environments := sortedEnvironments(codeState)
-
+func getLocation() *time.Location {
 	now := time.Now().Truncate(time.Second)
 	localZone, localZoneOffset := now.Zone()
-	location := time.FixedZone(localZone, localZoneOffset)
+	return time.FixedZone(localZone, localZoneOffset)
+}
+
+// FIXME: use ShowEnvironmentState? rename?
+func ShowEnvironments(codeState *codemanager.CodeState) {
+	environments := sortedEnvironments(codeState)
+	location := getLocation()
 
 	for _, environmentState := range environments {
 		environment := environmentState.Environment
@@ -65,5 +76,18 @@ func ShowEnvironments(codeState *codemanager.CodeState) {
 			fmt.Printf("%-45s  %-9s  %s\n", environment, deploy.Status, localDate)
 			environment = ""
 		}
+	}
+}
+
+// FIXME: how do we handle non-existent environments?
+func ShowEnvironmentState(environmentState *codemanager.EnvironmentState) {
+	environment := environmentState.Environment
+	location := getLocation()
+
+	environmentState.SortDeploys(codemanager.Descending)
+	for _, deploy := range environmentState.Deploys {
+		localDate := deploy.MatchTime().Truncate(time.Second).In(location)
+		fmt.Printf("%-45s  %-9s  %s\n", environment, deploy.Status, localDate)
+		environment = ""
 	}
 }
