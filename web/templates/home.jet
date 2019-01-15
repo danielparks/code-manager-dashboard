@@ -1,0 +1,37 @@
+{{extends "layout.jet"}}
+
+{{block deployRow(deploy)}}
+  <td>{{deploy.Status}}</td>
+  <td><datetime>{{deploy.MatchTime().UTC().Format("2006-01-02 15:04:05 -0700")}}</datetime></td>
+{{end}}
+
+{{block title()}}Environment deployment{{end}}
+
+{{block body()}}
+  <h1>Environment deployment status</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th id="col_environment">Environment</th>
+        <th id="col_status">Status</th>
+        <th id="col_time">Time</th>
+      </tr>
+    </thead>
+    <tbody>
+    {{range .SortedEnvironments()}}
+      <tr>
+        <th rowspan="{{len(.Deploys)}}">{{.Environment}}</th>
+        {{range .SortedDeploys(Descending)[0:1]}}
+          {{yield deployRow(deploy=.)}}
+        {{end}}
+      </tr>
+      {{range .SortedDeploys(Descending)[1:]}}
+      <tr>
+        {{yield deployRow(deploy=.)}}
+      </tr>
+      {{end}}
+    {{end}}
+    </tbody>
+  </table>
+{{end}}

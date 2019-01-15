@@ -89,3 +89,9 @@ func _sortDeploys(deploys []Deploy, order SortOrder) {
 func (environmentState *EnvironmentState) SortDeploys(order SortOrder) {
 	_sortDeploys(environmentState.Deploys, order)
 }
+
+// Convenience, consistency, clarity
+func (environmentState *EnvironmentState) SortedDeploys(order SortOrder) []Deploy {
+	_sortDeploys(environmentState.Deploys, order)
+	return environmentState.Deploys
+}

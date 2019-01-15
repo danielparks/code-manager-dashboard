@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>{{yield title()}}</title>
+		<link rel="stylesheet" href="/static/css/general.css">
+		<script defer src="/static/vendor/moment-with-locales-2.23.0.js"></script>
+		<script defer src="/static/vendor/jquery-3.3.1.min.js"></script>
+		<script defer src="/static/js/general.js"></script>
+	</head>
+
+	<body>
+		{{yield body()}}
+	</body>
+</html>

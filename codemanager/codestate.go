@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
+	"sort"
+	"strings"
 	"time"
 )
 
@@ -141,4 +143,21 @@ func convertRawDeploy(rawDeploy JsonObject, status DeployStatus) Deploy {
 	deploy.CorrectFailedStatus()
 
 	return deploy
+}
+
+func (codeState *CodeState) SortedEnvironments() []EnvironmentState {
+	environments := make([]EnvironmentState, len(codeState.Environments))
+	i := 0
+	for _, environmentState := range codeState.Environments {
+		environments[i] = environmentState
+		i++
+	}
+
+	sort.Slice(environments, func(i, j int) bool {
+		a := environments[i].Deploys[0]
+		b := environments[j].Deploys[0]
+		return strings.ToLower(a.Environment) < strings.ToLower(b.Environment)
+	})
+
+	return environments
 }

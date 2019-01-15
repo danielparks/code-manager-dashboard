@@ -1,12 +1,10 @@
 package command
 
 import (
+	"fmt"
 	"github.com/danielparks/code-manager-dashboard/codemanager"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"fmt"
-	"sort"
-	"strings"
 	"time"
 )
 
@@ -39,23 +37,6 @@ var showCommand = &cobra.Command{
 	},
 }
 
-func sortedEnvironments(codeState *codemanager.CodeState) []codemanager.EnvironmentState {
-	environments := make([]codemanager.EnvironmentState, len(codeState.Environments))
-	i := 0
-	for _, environmentState := range codeState.Environments {
-		environments[i] = environmentState
-		i++
-	}
-
-	sort.Slice(environments, func(i, j int) bool {
-		a := environments[i].Deploys[0]
-		b := environments[j].Deploys[0]
-		return strings.ToLower(a.Environment) < strings.ToLower(b.Environment)
-	})
-
-	return environments
-}
-
 func getLocation() *time.Location {
 	now := time.Now().Truncate(time.Second)
 	localZone, localZoneOffset := now.Zone()
@@ -64,7 +45,7 @@ func getLocation() *time.Location {
 
 // FIXME: use ShowEnvironmentState? rename?
 func ShowEnvironments(codeState *codemanager.CodeState) {
-	environments := sortedEnvironments(codeState)
+	environments := codeState.SortedEnvironments()
 	location := getLocation()
 
 	for _, environmentState := range environments {
