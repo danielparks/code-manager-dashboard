@@ -21,7 +21,7 @@ var trimCommand = &cobra.Command{
 	Use:   "trim",
 	Short: "Trim deploys down to a specified size (per environment)",
 	Args:  cobra.NoArgs,
-	Run:   func(command *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 		stateFile := getFlagString(command, "state-file")
 		count := getFlagInt(command, "count")
 		show := getFlagBool(command, "show")

@@ -16,7 +16,7 @@ func init() {
 var getapiCommand = &cobra.Command{
 	Use:   "getapi",
 	Short: "Load current state from the Code Manager API",
-	Run:   func(command *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 		stateFile := getFlagString(command, "state-file")
 		show := getFlagBool(command, "show")
 

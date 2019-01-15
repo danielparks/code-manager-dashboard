@@ -17,7 +17,7 @@ func init() {
 var getfileCommand = &cobra.Command{
 	Use:   "getfile",
 	Short: "Load current state from a file",
-	Run:   func(command *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 		stateFile := getFlagString(command, "state-file")
 		show := getFlagBool(command, "show")
 
@@ -47,7 +47,6 @@ var getfileCommand = &cobra.Command{
 		}
 	},
 }
-
 
 // Get deploy status from file
 func loadRawCodeState(source string) map[string]interface{} {

@@ -18,7 +18,7 @@ var showCommand = &cobra.Command{
 	Use:   "show",
 	Short: "Show deployment status recorded in the state file",
 	Args:  cobra.ArbitraryArgs,
-	Run:   func(command *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 		stateFile := getFlagString(command, "state-file")
 
 		codeState, err := codemanager.LoadCodeState(stateFile)
