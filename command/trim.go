@@ -45,12 +45,11 @@ var trimCommand = &cobra.Command{
 }
 
 func TrimEnvironments(codeState *codemanager.CodeState, count int) {
-	for i, environmentState := range codeState.Environments {
+	for _, environmentState := range codeState.Environments {
 		environmentState.SortDeploys(codemanager.Descending)
 		if len(environmentState.Deploys) > count {
 			environmentState.Deploys = environmentState.Deploys[0:count]
 			fmt.Printf("env %s: %d\n", environmentState.Environment, len(environmentState.Deploys))
 		}
-		codeState.Environments[i] = environmentState
 	}
 }

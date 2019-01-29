@@ -30,8 +30,7 @@ var showCommand = &cobra.Command{
 			ShowEnvironments(&codeState)
 		} else {
 			for _, name := range args {
-				environmentState := codeState.Environments[name]
-				ShowEnvironmentState(&environmentState)
+				ShowEnvironmentState(codeState.Environments[name])
 			}
 		}
 	},

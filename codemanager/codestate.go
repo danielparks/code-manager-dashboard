@@ -10,7 +10,7 @@ import (
 )
 
 type CodeState struct {
-	Environments map[string]EnvironmentState
+	Environments map[string]*EnvironmentState
 }
 
 const RFC3339Micro = "2006-01-02T15:04:05.999Z07:00"
@@ -80,12 +80,10 @@ func (codeState *CodeState) UpdateFromRawCodeState(rawCodeState JsonObject) {
 				},
 			})
 		}
-
-		codeState.Environments[name] = environmentState
 	}
 
 	if codeState.Environments == nil {
-		codeState.Environments = map[string]EnvironmentState{}
+		codeState.Environments = map[string]*EnvironmentState{}
 	}
 
 	// Look for all the environments we haven't already seen.
@@ -96,7 +94,7 @@ func (codeState *CodeState) UpdateFromRawCodeState(rawCodeState JsonObject) {
 
 		newEnvironmentState := EnvironmentState{Environment: name}
 		newEnvironmentState.AddDeploys(deploys)
-		codeState.Environments[name] = newEnvironmentState
+		codeState.Environments[name] = &newEnvironmentState
 	}
 }
 
@@ -145,8 +143,8 @@ func convertRawDeploy(rawDeploy JsonObject, status DeployStatus) Deploy {
 	return deploy
 }
 
-func (codeState *CodeState) SortedEnvironments() []EnvironmentState {
-	environments := make([]EnvironmentState, len(codeState.Environments))
+func (codeState *CodeState) SortedEnvironments() []*EnvironmentState {
+	environments := make([]*EnvironmentState, len(codeState.Environments))
 	i := 0
 	for _, environmentState := range codeState.Environments {
 		environments[i] = environmentState
