@@ -7,7 +7,7 @@ import (
 
 type EnvironmentState struct {
 	Environment string
-	Deploys     []Deploy
+	Deploys     []*Deploy
 }
 
 type SortOrder int
@@ -22,13 +22,18 @@ func (environmentState *EnvironmentState) AddDeploys(newDeploys []Deploy) {
 		environmentState.Environment,
 		len(newDeploys))
 
-	deploysToAdd := []Deploy{}
+	deploysToAdd := []*Deploy{}
 
 	environmentState.SortDeploys(Descending)
 	oldDeploysMatched := make(map[int]bool, len(environmentState.Deploys))
 
-	_sortDeploys(newDeploys, Descending)
-	for _, newDeploy := range newDeploys {
+	_newDeploys := make([]*Deploy, len(newDeploys))
+	for i, newDeploy := range newDeploys {
+		_newDeploys[i] = &newDeploy
+	}
+
+	_sortDeploys(_newDeploys, Descending)
+	for _, newDeploy := range _newDeploys {
 		possibleMatch := -1
 		found := false
 		for i, oldDeploy := range environmentState.Deploys {
@@ -74,7 +79,7 @@ func (environmentState *EnvironmentState) AddDeploys(newDeploys []Deploy) {
 	environmentState.Deploys = append(environmentState.Deploys, deploysToAdd...)
 }
 
-func _sortDeploys(deploys []Deploy, order SortOrder) {
+func _sortDeploys(deploys []*Deploy, order SortOrder) {
 	sort.Slice(deploys, func(i, j int) bool {
 		a := deploys[i].MatchTime()
 		b := deploys[j].MatchTime()
@@ -91,7 +96,7 @@ func (environmentState *EnvironmentState) SortDeploys(order SortOrder) {
 }
 
 // Convenience, consistency, clarity
-func (environmentState *EnvironmentState) SortedDeploys(order SortOrder) []Deploy {
+func (environmentState *EnvironmentState) SortedDeploys(order SortOrder) []*Deploy {
 	_sortDeploys(environmentState.Deploys, order)
 	return environmentState.Deploys
 }

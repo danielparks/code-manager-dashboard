@@ -17,7 +17,7 @@ type Deploy struct {
 	Error         JsonObject
 }
 
-func (deploy Deploy) CorrectFailedStatus() bool {
+func (deploy *Deploy) CorrectFailedStatus() bool {
 	// If the status is Failed and the error message contains the below, then it
 	// actually the represents environment being deleted.
 	const deletionMsg = "cannot be found in any source and will not be deployed."
@@ -34,7 +34,7 @@ func (deploy Deploy) CorrectFailedStatus() bool {
 	return deploy.Status == Deleted
 }
 
-func (deploy Deploy) DisplayTime() time.Time {
+func (deploy *Deploy) DisplayTime() time.Time {
 	// We really care about when it was finished.
 	if deploy.HasFinishedTime() {
 		return deploy.FinishedAt
@@ -45,7 +45,7 @@ func (deploy Deploy) DisplayTime() time.Time {
 	}
 }
 
-func (deploy Deploy) MatchTime() time.Time {
+func (deploy *Deploy) MatchTime() time.Time {
 	// Match on queued time, if possible
 	if deploy.HasQueuedTime() {
 		return deploy.QueuedAt
@@ -56,19 +56,19 @@ func (deploy Deploy) MatchTime() time.Time {
 	}
 }
 
-func (deploy Deploy) HasQueuedTime() bool {
+func (deploy *Deploy) HasQueuedTime() bool {
 	return deploy.QueuedAt.After(time.Time{})
 }
 
-func (deploy Deploy) HasFinishedTime() bool {
+func (deploy *Deploy) HasFinishedTime() bool {
 	return deploy.FinishedAt.After(time.Time{})
 }
 
-func (deploy Deploy) HasEstimatedTime() bool {
+func (deploy *Deploy) HasEstimatedTime() bool {
 	return deploy.EstimatedTime.After(time.Time{})
 }
 
-func (deploy Deploy) String() string {
+func (deploy *Deploy) String() string {
 	return fmt.Sprintf("%s %s (%s)", deploy.Environment, deploy.Status, deploy.MatchTime())
 }
 
@@ -81,7 +81,7 @@ func boolToEqual(value bool) string {
 }
 
 // This attempts to match a deploy record, a, with an updated deploy record, b.
-func (a Deploy) Match(b Deploy) Trinary {
+func (a *Deploy) Match(b *Deploy) Trinary {
 	if a.Environment != b.Environment {
 		log.Tracef("Match No: environment: %q ≠ %q", a.Environment, b.Environment)
 		return No
@@ -157,7 +157,7 @@ func (a Deploy) Match(b Deploy) Trinary {
 	return Maybe
 }
 
-func (deploy *Deploy) Update(newDeploy Deploy) {
+func (deploy *Deploy) Update(newDeploy *Deploy) {
 	log.Debugf("Updating %q deploy from %s to %s",
 		deploy.Environment, deploy.Status, newDeploy.Status)
 	deploy.Status = newDeploy.Status
